@@ -18,9 +18,13 @@ before_install:
   - chmod +x gradlew
 
 before_deploy:
-  - zip -r QnA-board *
-  - mkdir -p deploy
-  - mv QnA-board.zip deploy/QnA-board.zip
+  - mkdir -p before-deploy
+  - cp scripts/*.sh before-deploy/
+  - cp appspec.yml before-deploy/
+  - cp build/libs/*.jar before-deploy/
+  - cd before-deploy && zip -r before-deploy *
+  - cd ../ && mkdir -p deploy
+  - mv before-deploy/before-deploy.zip deploy/QnA-board.zip
 
 deploy:
   - provider: s3
@@ -32,6 +36,19 @@ deploy:
     acl: private
     local_dir: deploy
     wait-until-deploy: true
+    on:
+      all_branches: true
+
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: spring-deploy-test
+    key: QnA-board.zip
+    bundle_type: zip
+    application: QnA-board
+    deployment_group: QnA-board-group
+    region: ap-northeast-2
+    wait-until-deployed: true
     on:
       all_branches: true
 
