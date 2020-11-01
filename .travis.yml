@@ -17,6 +17,24 @@ script: "sudo ./gradlew clean build"
 before_install:
   - chmod +x gradlew
 
+before_deploy:
+  - zip -r QnA-board *
+  - mkdir -p deploy
+  - mv QnA-board.zip deploy/QnA-board.zip
+
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: spring-deploy-test
+    region: ap-northeast-2
+    skip_cleanup: true
+    acl: private
+    local_dir: deploy
+    wait-until-deploy: true
+    on:
+      all_branches: true
+
 # CI 실행 완료 시 메일로 알람
 notifications:
   email:
