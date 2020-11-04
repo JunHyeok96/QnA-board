@@ -1,8 +1,11 @@
-package com.board.domain;
+package com.board.domain.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.board.domain.user.User;
+import com.board.domain.user.UserRepository;
 import com.board.web.dto.UserRequestDto;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +26,7 @@ public class UserRepositoryTest {
     String id = "j005580";
     String email = "j005580@naver.com";
     String password = "abcde";
+    LocalDateTime now = LocalDateTime.now();
 
     UserRequestDto userRequestDto = UserRequestDto.builder()
         .userId(id)
@@ -42,6 +46,8 @@ public class UserRepositoryTest {
     assertThat(user.getEmail()).isEqualTo(email);
     assertThat(user.getUserId()).isEqualTo(id);
     assertThat(user.getPassword()).isEqualTo(password);
+    assertThat(user.getCreateDate()).isAfter(now);
+    assertThat(user.getModifiedDate()).isAfter(now);
   }
 
 }

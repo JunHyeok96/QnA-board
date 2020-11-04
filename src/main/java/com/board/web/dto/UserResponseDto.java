@@ -1,6 +1,6 @@
 package com.board.web.dto;
 
-import com.board.domain.User;
+import com.board.domain.user.User;
 import lombok.Getter;
 
 @Getter

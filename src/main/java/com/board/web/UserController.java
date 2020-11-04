@@ -1,6 +1,6 @@
 package com.board.web;
 
-import com.board.domain.UserRepository;
+import com.board.domain.user.UserRepository;
 import com.board.service.UserService;
 import com.board.web.dto.UserRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -44,5 +44,6 @@ public class UserController {
     model.addAttribute("user", userService.findById(id));
     return "user/updateForm";
   }
+
 
 }

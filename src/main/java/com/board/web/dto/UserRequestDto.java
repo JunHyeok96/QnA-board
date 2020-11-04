@@ -1,6 +1,6 @@
 package com.board.web.dto;
 
-import com.board.domain.User;
+import com.board.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,7 +8,7 @@ import lombok.Getter;
 public class UserRequestDto {
 
   private String userId;
-  private String name;
+  private String name ;
   private String password;
   private String email;
 

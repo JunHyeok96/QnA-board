@@ -1,7 +1,7 @@
 package com.board.service;
 
-import com.board.domain.User;
-import com.board.domain.UserRepository;
+import com.board.domain.user.User;
+import com.board.domain.user.UserRepository;
 import com.board.web.dto.UserRequestDto;
 import com.board.web.dto.UserResponseDto;
 import java.util.stream.Collectors;

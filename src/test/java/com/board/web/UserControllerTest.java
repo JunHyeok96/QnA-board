@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-import com.board.domain.User;
-import com.board.domain.UserRepository;
+import com.board.domain.user.User;
+import com.board.domain.user.UserRepository;
 import com.board.web.dto.UserRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.collection.IsCollectionWithSize;
