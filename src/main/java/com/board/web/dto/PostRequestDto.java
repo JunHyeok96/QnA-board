@@ -4,9 +4,9 @@ import com.board.domain.post.Post;
 import com.board.domain.post.PostType;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Getter
 public class PostRequestDto {
   private Long userId;
