@@ -1,32 +1,41 @@
 {{>layout/header}}
-<div class="container">
-  <div class="card text-center">
-    <div class="card-header">
-      <h5>{{post.title}}</h5>
-    </div>
-    <div class="card-body" style="text-align:left">
-      <p class="card-text">{{post.content}}</p>
-    </div>
-
-    <div class="card-footer text-muted" style="text-align: left">
-      <a href="/post/create?post-type=A&&post-id={{post.id}}">
-      <input type="button" class="btn btn-outline-success" value="답변 작성"/>
-      </a>
-    </div>
-  </div>
-
-  <div class="list-group">
-    {{#answer}}
-      <div class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1">{{title}}</h5>
-          <small>{{createDate}}</small>
-        </div>
-        <p class="mb-1">{{content}}</p>
-        <small>user : {{userId}}</small>
+<div class="card text-center">
+  <div class="card-header">
+    <h5>{{post.title}}</h5>
+    <div class="dropdown mr-1" style="float: right;">
+      <button type="button" class="btn btn-secondary dropdown-toggle" id="dropdownMenuOffset"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="10,20">
+        더보기
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
+        <a href="/post/update/{{post.id}}" class="dropdown-item">수정</a>
+        <a href="#" class="dropdown-item" id="btn-delete">삭제</a>
       </div>
-    {{/answer}}
+    </div>
+  </div>
+  <div class="card-body" style="text-align:left">
+    <p class="card-text">{{post.content}}</p>
   </div>
 
+  <div class="card-footer text-muted" style="text-align: left">
+    <a href="/post/create?post-type=A&&post-id={{post.id}}">
+    <input type="button" class="btn btn-outline-success" value="답변 작성"/>
+    </a>
+  </div>
 </div>
+
+<div class="list-group">
+  {{#answer}}
+    <div class="list-group-item list-group-item-action">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">{{title}}</h5>
+        <small>{{createDate}}</small>
+      </div>
+      <p class="mb-1">{{content}}</p>
+      <small>user : {{userId}}</small>
+    </div>
+  {{/answer}}
+</div>
+
+<input type="hidden" id="id" value="{{post.id}}"/>
 {{>layout/footer}}

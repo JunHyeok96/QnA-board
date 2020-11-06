@@ -1,22 +1,20 @@
 {{>layout/header}}
 
-<div class="container">
-  <form>
-    <div class="form-group">
-      <label>제목</label>
-      <input type="text" class="form-control" id="title" aria-describedby="titleInput" required>
-    </div>
-    <div class="form-group">
-      <label>내용</label>
-      <textarea class="form-control" id="content" cols="30" style="resize:none;height:500px; "
-                required></textarea>
-    </div>
-    <!--userId 작업필요 -->
-    <input type="hidden" id="userId" value="test-user">
-    <input type="hidden" id="postType" value="{{postType}}">
-    <input type="hidden" id="postId" value="{{id}}">
-  </form>
-  <button type="button" id="btn-save" class="btn btn-primary">확인</button>
+<form>
+  <div class="form-group">
+    <label>제목</label>
+    <input type="text" class="form-control" id="title" aria-describedby="titleInput" required>
+  </div>
+  <div class="form-group">
+    <label>내용</label>
+    <textarea class="form-control" id="content" cols="30" style="resize:none;height:500px; "
+              required></textarea>
+  </div>
+  <!--userId 작업필요 -->
+  <input type="hidden" id="userId" value="test-user">
+  <input type="hidden" id="postType" value="{{postType}}">
+  <input type="hidden" id="postId" value="{{id}}">
+</form>
+<button type="button" id="btn-save" class="btn btn-primary">확인</button>
 
-</div>
 {{>layout/footer}}

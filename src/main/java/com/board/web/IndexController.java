@@ -33,4 +33,11 @@ public class IndexController {
     model.addAttribute("answer", postService.findAnswer(id));
     return "post/read";
   }
+
+  @GetMapping("/post/update/{id}")
+  public String postUpdate(@PathVariable Long id, Model model){
+    model.addAttribute("post", postService.findById(id));
+    return "post/update";
+  }
+
 }

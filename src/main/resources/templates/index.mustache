@@ -5,31 +5,27 @@
 </head>
 <body>
 {{>layout/header}}
-<div class="container">
-  <div class="list-group">
-    {{#posts}}
-      <a href="/post/read/{{id}}" class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1">{{title}}</h5>
-          <small>{{createDate}}</small>
-        </div>
-        <p class="mb-1">{{content}}</p>
-        <small>{{userId}}</small>
-      </a>
-    {{/posts}}
-  </div>
-  <div style="text-align: center">
-    <nav aria-label="Page navigation example" style="text-align: center;">
-      <ul class="pagination">
-        {{#posts}}
-          <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item"><a class="page-link" href="#">Next</a></li>
-        {{/posts}}
-      </ul>
-    </nav>
-  </div>
+<div class="list-group">
+  {{#posts}}
+    <a href="/post/read/{{id}}" class="list-group-item list-group-item-action">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">{{title}}</h5>
+        <small>{{createDate}}</small>
+      </div>
+      <p class="mb-1">{{content}}</p>
+      <small>{{userId}}</small>
+    </a>
+  {{/posts}}
+</div>
+<div style="text-align: center">
+  <nav aria-label="Page navigation example" style="text-align: center;">
+    <ul class="pagination">
+      <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+      <li class="page-item"><a class="page-link" href="#">1</a></li>
+      <li class="page-item"><a class="page-link" href="#">2</a></li>
+      <li class="page-item"><a class="page-link" href="#">3</a></li>
+      <li class="page-item"><a class="page-link" href="#">Next</a></li>
+    </ul>
+  </nav>
 </div>
 {{>layout/footer}}

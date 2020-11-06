@@ -183,4 +183,33 @@ public class PostControllerTest {
     assertThat(postType).isEqualTo(post.getPostType().toString());
     assertThat(userId).isEqualTo(post.getUserId());
   }
+
+  @Test
+  public void 게시글삭제() throws Exception {
+
+    String title = "title";
+    String content = "content";
+    String postType = "Q";
+    String userId = "test-user";
+
+    PostRequestDto postRequestDto = PostRequestDto.builder()
+        .title(title)
+        .content(content)
+        .postType(postType)
+        .userId(userId)
+        .build();
+
+    Long id = postRepository.save(postRequestDto.toEntity()).getId();
+
+    assertThat(postRepository.findAll().size()).isEqualTo(1);
+
+    String url = "http://localhost:" + port + "/post/" + id.toString();
+
+    mvc.perform(MockMvcRequestBuilders.delete(url)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+
+    assertThat(postRepository.findAll().size()).isEqualTo(0);
+
+  }
 }

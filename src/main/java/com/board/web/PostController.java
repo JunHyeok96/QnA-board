@@ -5,6 +5,7 @@ import com.board.web.dto.post.PostRequestDto;
 import com.board.web.dto.post.PostResponseDto;
 import com.board.web.dto.post.PostUpdateDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,5 +43,10 @@ public class PostController {
   @PutMapping("/post/{id}")
   public void update(@PathVariable Long id, @RequestBody PostUpdateDto postUpdateDto) {
     postService.update(id, postUpdateDto);
+  }
+
+  @DeleteMapping("/post/{id}")
+  public void delete(@PathVariable Long id) {
+    postService.delete(id);
   }
 }

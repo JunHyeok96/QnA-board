@@ -1,5 +1,5 @@
 var main = {
-  init : function () {
+  init: function () {
     var _this = this;
     $('#btn-save').on('click', function () {
       _this.save();
@@ -13,7 +13,7 @@ var main = {
       _this.delete();
     });
   },
-  save : function () {
+  save: function () {
     var data = {
       title: $('#title').val(),
       userId: $('#userId').val(),
@@ -26,49 +26,47 @@ var main = {
       type: 'POST',
       url: '/post/',
       dataType: 'text',
-      contentType:'application/json; charset=utf-8',
+      contentType: 'application/json; charset=utf-8',
       data: JSON.stringify(data)
-    }).done(function() {
+    }).done(function () {
       alert('글이 등록되었습니다.');
-      if( data.postId ==""){
+      if (data.postId == "") {
         window.location.href = '/';
-      }else{
+      } else {
         window.location.href = '/post/read/' + data.postId;
       }
     }).fail(function (error) {
       alert(JSON.stringify(error));
     });
   },
-  update : function () {
+  update: function () {
     var data = {
+      id: $('#id').val(),
       title: $('#title').val(),
       content: $('#content').val()
     };
-
-    var id = $('#id').val();
-
     $.ajax({
       type: 'PUT',
-      url: '/api/v1/posts/'+id,
-      dataType: 'json',
-      contentType:'application/json; charset=utf-8',
+      url: '/post/' + data.id,
+      dataType: 'text',
+      contentType: 'application/json; charset=utf-8',
       data: JSON.stringify(data)
-    }).done(function() {
+    }).done(function () {
       alert('글이 수정되었습니다.');
-      window.location.href = '/';
+      window.location.href = '/post/read/' + data.id;
     }).fail(function (error) {
       alert(JSON.stringify(error));
     });
   },
-  delete : function () {
+  delete: function () {
     var id = $('#id').val();
 
     $.ajax({
       type: 'DELETE',
-      url: '/api/v1/posts/'+id,
-      dataType: 'json',
-      contentType:'application/json; charset=utf-8'
-    }).done(function() {
+      url: '/post/' + id,
+      dataType: 'text',
+      contentType: 'application/json; charset=utf-8'
+    }).done(function () {
       alert('글이 삭제되었습니다.');
       window.location.href = '/';
     }).fail(function (error) {

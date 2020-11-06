@@ -52,4 +52,9 @@ public class PostService {
     post.update(postUpdateDto.getTitle(), postUpdateDto.getContent());
     return id;
   }
+
+  @Transactional
+  public void delete(Long id){
+    postRepository.deleteById(id);
+  }
 }
