@@ -1,4 +1,4 @@
-package com.board.web.dto;
+package com.board.web.dto.comment;
 
 import com.board.domain.comment.Comment;
 import lombok.Builder;

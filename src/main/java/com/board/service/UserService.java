@@ -2,8 +2,8 @@ package com.board.service;
 
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
-import com.board.web.dto.UserRequestDto;
-import com.board.web.dto.UserResponseDto;
+import com.board.web.dto.user.UserRequestDto;
+import com.board.web.dto.user.UserResponseDto;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

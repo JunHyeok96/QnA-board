@@ -1,20 +1,17 @@
 package com.board.web;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.*;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.board.domain.post.Post;
 import com.board.domain.post.PostRepository;
-import com.board.web.dto.PostRequestDto;
-import com.board.web.dto.PostResponseDto;
-import com.board.web.dto.PostUpdateDto;
+import com.board.web.dto.post.PostRequestDto;
+import com.board.web.dto.post.PostResponseDto;
+import com.board.web.dto.post.PostUpdateDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.hamcrest.collection.IsCollectionWithSize;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,41 +60,34 @@ public class PostControllerTest {
 
   @Test
   public void 단일게시물조회() throws Exception {
+    //given
     String title = "title";
     String content = "content";
     String postType = "Q";
-    Long userId = 1234L;
-
+    String userId = "test-user";
     PostRequestDto postRequestDto = PostRequestDto.builder()
         .title(title)
         .content(content)
         .postType(postType)
         .userId(userId)
         .build();
+    Long id = postRepository.save(postRequestDto.toEntity()).getId();
+    String url = "http://localhost:" + port + "/post/" + id.toString();
 
-    Long postId = postRepository.save(postRequestDto.toEntity()).getId();
-
-    String url = "http://localhost:" + port + "/post/" + postId.toString();
-
+    //when
     MvcResult result =
         mvc.perform(MockMvcRequestBuilders.get(url))
             .andExpect(status().isOk())
             .andReturn();
-
     String returnContent = result.getResponse().getContentAsString();
-
-    System.out.println(returnContent);
-
     PostResponseDto responseDto = mapper.readValue(returnContent, PostResponseDto.class);
 
-    List<Post> posts = postRepository.findAll();
-    Post post = posts.get(0);
-
+    //then
+    Post post = postRepository.findById(id).get();
     assertThat(post.getId()).isEqualTo(responseDto.getId());
     assertThat(post.getContent()).isEqualTo(responseDto.getContent());
     assertThat(post.getTitle()).isEqualTo(responseDto.getTitle());
     assertThat(post.getUserId()).isEqualTo(responseDto.getUserId());
-    assertThat(post.getPostType().toString()).isEqualTo(responseDto.getPostType());
   }
 
   @Test
@@ -105,7 +95,7 @@ public class PostControllerTest {
     String title = "title";
     String content = "content";
     String postType = "Q";
-    Long userId = 1234L;
+    String userId = "test-user";
 
     PostRequestDto postRequestDto = PostRequestDto.builder()
         .title(title)
@@ -130,7 +120,7 @@ public class PostControllerTest {
     String title = "title";
     String content = "content";
     String postType = "Q";
-    Long userId = 1234L;
+    String userId = "test-user";
 
     String updateTitle = "updateTitle";
     String updateContent = "updateContent";
@@ -169,7 +159,7 @@ public class PostControllerTest {
     String title = "title";
     String content = "content";
     String postType = "Q";
-    Long userId = 1234L;
+    String userId = "test-user";
 
     PostRequestDto postRequestDto = PostRequestDto.builder()
         .title(title)
@@ -192,6 +182,5 @@ public class PostControllerTest {
     assertThat(content).isEqualTo(post.getContent());
     assertThat(postType).isEqualTo(post.getPostType().toString());
     assertThat(userId).isEqualTo(post.getUserId());
-
   }
 }

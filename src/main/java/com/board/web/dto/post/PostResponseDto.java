@@ -1,4 +1,4 @@
-package com.board.web.dto;
+package com.board.web.dto.post;
 
 import com.board.domain.post.Post;
 import java.io.Serializable;
@@ -11,10 +11,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class PostResponseDto implements Serializable {
   private Long id;
-  private Long userId;
+  private String userId;
   private String title;
   private String content;
-  private String postType;
   private LocalDateTime createDate;
   private LocalDateTime modifiedDate;
 
@@ -24,7 +23,6 @@ public class PostResponseDto implements Serializable {
     this.userId = entry.getUserId();
     this.title = entry.getTitle();
     this.content = entry.getContent();
-    this.postType = entry.getPostType().name();
     this.createDate = entry.getCreateDate();
     this.modifiedDate = entry.getModifiedDate();
   }

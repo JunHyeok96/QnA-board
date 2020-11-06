@@ -2,7 +2,7 @@ package com.board.domain.comment;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.board.web.dto.CommentRequestDto;
+import com.board.web.dto.comment.CommentRequestDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

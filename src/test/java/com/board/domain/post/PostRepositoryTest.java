@@ -1,13 +1,10 @@
 package com.board.domain.post;
 
-import static org.junit.Assert.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.board.web.dto.PostRequestDto;
+import com.board.web.dto.post.PostRequestDto;
 import java.time.LocalDateTime;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,10 +21,11 @@ public class PostRepositoryTest {
   @Test
   public void 게시물정보불러오기() {
 
-    Long userId = 1234L;
+    String userId = "test-user";
     String title = "질문 입니다.";
     String content = "질문 내용입니다.";
     String post_type = "Q";
+    String postId = null;
     LocalDateTime now = LocalDateTime.now();
 
     PostRequestDto postRequestDto = PostRequestDto.builder()
@@ -56,7 +54,7 @@ public class PostRepositoryTest {
   public void 잘못된게시글타입() {
 
     //when
-    Long userId = 1234L;
+    String userId = "test-user";
     String title = "질문 입니다.";
     String content = "질문 내용입니다.";
     String post_type = "K";  //잘못된 형식

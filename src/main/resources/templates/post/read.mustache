@@ -1,0 +1,32 @@
+{{>layout/header}}
+<div class="container">
+  <div class="card text-center">
+    <div class="card-header">
+      <h5>{{post.title}}</h5>
+    </div>
+    <div class="card-body" style="text-align:left">
+      <p class="card-text">{{post.content}}</p>
+    </div>
+
+    <div class="card-footer text-muted" style="text-align: left">
+      <a href="/post/create?post-type=A&&post-id={{post.id}}">
+      <input type="button" class="btn btn-outline-success" value="답변 작성"/>
+      </a>
+    </div>
+  </div>
+
+  <div class="list-group">
+    {{#answer}}
+      <div class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{title}}</h5>
+          <small>{{createDate}}</small>
+        </div>
+        <p class="mb-1">{{content}}</p>
+        <small>user : {{userId}}</small>
+      </div>
+    {{/answer}}
+  </div>
+
+</div>
+{{>layout/footer}}

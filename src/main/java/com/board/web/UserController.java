@@ -2,7 +2,7 @@ package com.board.web;
 
 import com.board.domain.user.UserRepository;
 import com.board.service.UserService;
-import com.board.web.dto.UserRequestDto;
+import com.board.web.dto.user.UserRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

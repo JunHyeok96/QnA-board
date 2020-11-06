@@ -2,9 +2,7 @@ package com.board.domain.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.board.domain.user.User;
-import com.board.domain.user.UserRepository;
-import com.board.web.dto.UserRequestDto;
+import com.board.web.dto.user.UserRequestDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.Test;

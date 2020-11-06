@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
-import com.board.web.dto.UserRequestDto;
+import com.board.web.dto.user.UserRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.collection.IsCollectionWithSize;
 import org.junit.After;

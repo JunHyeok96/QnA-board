@@ -1,4 +1,4 @@
-package com.board.web.dto;
+package com.board.web.dto.post;
 
 import com.board.domain.post.Post;
 import com.board.domain.post.PostType;
@@ -9,31 +9,35 @@ import lombok.extern.slf4j.Slf4j;
 
 @Getter
 public class PostRequestDto {
-  private Long userId;
+
+  private String userId;
   private String title;
   private String content;
   private String postType;
+  private Long postId;
 
   @Builder
-  public PostRequestDto(Long userId, String title, String content, String postType){
+  public PostRequestDto(String userId, String title, String content, String postType, Long postId) {
     this.userId = userId;
     this.title = title;
     this.content = content;
-    try{
+    this.postId = postId;
+    try {
       PostType.valueOf(postType);
       this.postType = postType;
-    }catch(Exception e){
+    } catch (Exception e) {
       throw new AssertionError("post_type 입력값이 잘못되었습니다.");
 
     }
   }
 
-  public Post toEntity(){
+  public Post toEntity() {
     return Post.builder()
         .content(content)
         .title(title)
         .userId(userId)
         .postType(PostType.valueOf(postType))
+        .postId(postId)
         .build();
   }
 

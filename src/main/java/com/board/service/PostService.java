@@ -2,9 +2,10 @@ package com.board.service;
 
 import com.board.domain.post.Post;
 import com.board.domain.post.PostRepository;
-import com.board.web.dto.PostRequestDto;
-import com.board.web.dto.PostResponseDto;
-import com.board.web.dto.PostUpdateDto;
+import com.board.domain.post.PostType;
+import com.board.web.dto.post.PostRequestDto;
+import com.board.web.dto.post.PostResponseDto;
+import com.board.web.dto.post.PostUpdateDto;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,8 @@ public class PostService {
   private final PostRepository postRepository;
 
   @Transactional(readOnly = true)
-  public List<PostResponseDto> findAll() {
-    return postRepository.findAll()
+  public List<PostResponseDto> findAllQuestion() {
+    return postRepository.findByPostType(PostType.Q)
         .stream()
         .map(PostResponseDto::new)
         .collect(Collectors.toList());
@@ -28,6 +29,14 @@ public class PostService {
   @Transactional(readOnly = true)
   public PostResponseDto findById(Long id) {
     return postRepository.findById(id).map(PostResponseDto::new).get();
+  }
+
+  @Transactional(readOnly = true)
+  public List<PostResponseDto> findAnswer(Long postId) {
+    return postRepository.findByPostId(postId)
+        .stream()
+        .map(PostResponseDto::new)
+        .collect(Collectors.toList());
   }
 
   @Transactional

@@ -28,18 +28,22 @@ public class Post extends BaseTimeEntity {
   private String content;
 
   @Column(length = 20, nullable = false)
-  private long userId;
+  private String userId;
+
+  @Column
+  private Long postId;
 
   @Enumerated(EnumType.STRING)
   @Column(columnDefinition = "ENUM('Q', 'A')", nullable = false)
   private PostType postType;
 
   @Builder
-  public Post(String title, String content, long userId, PostType postType) {
+  public Post(String title, String content, String userId, PostType postType, Long postId) {
     this.title = title;
     this.content = content;
     this.userId = userId;
     this.postType = postType;
+    this.postId = postId;
   }
 
   public Post update(String title, String content) {

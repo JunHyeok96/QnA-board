@@ -1,9 +1,9 @@
 package com.board.web;
 
 import com.board.service.PostService;
-import com.board.web.dto.PostRequestDto;
-import com.board.web.dto.PostResponseDto;
-import com.board.web.dto.PostUpdateDto;
+import com.board.web.dto.post.PostRequestDto;
+import com.board.web.dto.post.PostResponseDto;
+import com.board.web.dto.post.PostUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,12 +21,17 @@ public class PostController {
 
   @GetMapping("/post/list")
   public List<PostResponseDto> postList() {
-    return postService.findAll();
+    return postService.findAllQuestion();
   }
 
   @GetMapping("/post/{id}")
   public PostResponseDto postOne(@PathVariable Long id) {
     return postService.findById(id);
+  }
+
+  @GetMapping("/post/answer/{postId}")
+  public List<PostResponseDto> answerList(@PathVariable Long postId) {
+    return postService.findAnswer(postId);
   }
 
   @PostMapping("/post/")
