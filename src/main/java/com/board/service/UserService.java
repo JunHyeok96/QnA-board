@@ -55,10 +55,10 @@ public class UserService {
     if (user == null) {
       log.info("id : " + userId + "는 존재하지 않는 유저입니다.");
       return false;
-    }else if (!user.matchPassword(password)) {
+    } else if (!user.matchPassword(password)) {
       log.info("id : " + userId + "님이 다른 비밀번호로 접근했습니다.");
       return false;
-    }else{
+    } else {
       session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user);
       log.info("id : " + userId + "님이 로그인 하셨습니다.");
       return true;

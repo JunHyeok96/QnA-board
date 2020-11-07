@@ -23,9 +23,9 @@ public class UserApiController {
   @PutMapping("/user/{id}/update")
   public String update(@PathVariable Long id, @RequestBody UserUpdateDto updateUser,
       HttpSession session) {
-    if (!HttpSessionUtils.isLoginUser(session)){
+    if (!HttpSessionUtils.isLoginUser(session)) {
       return "redirect:/user/login";
-    } else{
+    } else {
       User user = HttpSessionUtils.getUserFromSession(session);
       userService.update(user.getId(), updateUser);
       return "redirect:/";

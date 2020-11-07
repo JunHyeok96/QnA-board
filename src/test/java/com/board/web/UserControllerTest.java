@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import java.util.List;
+import org.springframework.web.util.NestedServletException;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
@@ -42,32 +43,45 @@ public class UserControllerTest {
 
   private MockMvc mvc;
 
+  //given
+  private final String name = "이준혁";
+  private final String id = "j005580";
+  private final String email = "j005580@naver.com";
+  private final String password = "abcde";
+
+  UserRequestDto userRequestDto;
+
+  MockHttpSession session = new MockHttpSession();
+
   @Before
   public void setup() {
     this.mvc = MockMvcBuilders.webAppContextSetup(context).build();
+    userRequestDto = UserRequestDto.builder()
+        .userId(id)
+        .name(name)
+        .password(password)
+        .email(email)
+        .build();
   }
 
   @After
   public void tearDown() throws Exception {
     userRepository.deleteAll();
+    userRequestDto = null;
   }
 
   @Test
   public void 회원가입_DB저장() throws Exception {
-    String name = "이준혁";
-    String id = "j005580";
-    String email = "j005580@naver.com";
-    String password = "abcde";
 
     String url = "http://localhost:" + port + "/user/create";
 
+    //when
     this.mvc.perform(MockMvcRequestBuilders.post(url)
         .param("name", name)
         .param("userId", id)
         .param("email", email)
         .param("password", password)).andExpect(status().is3xxRedirection());
 
-    //when
     List<User> userAll = userRepository.findAll();
     User user = userAll.get(0);
 
@@ -80,17 +94,6 @@ public class UserControllerTest {
 
   @Test
   public void 사용자목록조회() throws Exception {
-    String name = "이준혁";
-    String id = "j005580";
-    String email = "j005580@naver.com";
-    String password = "abcde";
-
-    UserRequestDto userRequestDto = UserRequestDto.builder()
-        .userId(id)
-        .name(name)
-        .password(password)
-        .email(email)
-        .build();
 
     userRepository.save(userRequestDto.toEntity());
     int size = userRepository.findAll().size();
@@ -104,22 +107,11 @@ public class UserControllerTest {
   @Test
   public void 사용자정보수정() throws Exception {
 
-    String email = "j005580@naver.com";
-    String id = "j005580";
+    //given
     String updateName = "제이그래머";
     String updatePassword = "wpdlrmfoaj";
 
-    MockHttpSession session = new MockHttpSession();
-
-    UserRequestDto userRequestDto = UserRequestDto.builder()
-        .userId(id)
-        .name("이준혁")
-        .password("asdf1")
-        .email(email)
-        .build();
-
     Long saveId = userRepository.save(userRequestDto.toEntity()).getId();
-
     session.setAttribute("sessionedUser", userRepository.findById(saveId).get());
 
     UserUpdateDto updateDto = UserUpdateDto.builder()
@@ -130,6 +122,7 @@ public class UserControllerTest {
 
     String url = "http://localhost:" + port + "/user/" + saveId + "/update";
 
+    //when
     this.mvc.perform(put(url).contentType(MediaType.APPLICATION_JSON)
         .content(new ObjectMapper().writeValueAsString(updateDto))
         .session(session))
@@ -142,4 +135,46 @@ public class UserControllerTest {
     assertThat(user.getName()).isEqualTo(updateName);
     assertThat(user.getPassword()).isEqualTo(updatePassword);
   }
+
+  @Test(expected = NestedServletException.class)
+  public void 타인의정보수정() throws Exception {
+
+    //given
+    String updateName = "제이그래머";
+    String updatePassword = "wpdlrmfoaj";
+
+    Long saveId = userRepository.save(userRequestDto.toEntity()).getId();
+
+    UserRequestDto newUser = UserRequestDto.builder()
+        .userId(id + "_2")
+        .name(name)
+        .password(password)
+        .email(email)
+        .build();
+    userRepository.save(newUser.toEntity()).getId();
+
+    session.setAttribute("sessionedUser", newUser);
+
+    UserUpdateDto updateDto = UserUpdateDto.builder()
+        .name(updateName)
+        .password(updatePassword)
+        .email(email)
+        .build();
+
+    String url = "http://localhost:" + port + "/user/" + saveId + "/update";
+
+    //when
+    this.mvc.perform(put(url).contentType(MediaType.APPLICATION_JSON)
+        .content(new ObjectMapper().writeValueAsString(updateDto))
+        .session(session))
+        .andExpect(status().isOk());
+
+    //then
+    User user = userRepository.findById(saveId)
+        .orElseThrow(() -> new IllegalArgumentException("잘못된 id정보"));
+
+    assertThat(user.getName()).isEqualTo(name);
+    assertThat(user.getPassword()).isEqualTo(password);
+  }
+
 }

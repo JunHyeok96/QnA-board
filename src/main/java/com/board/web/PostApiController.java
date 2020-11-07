@@ -4,8 +4,12 @@ import com.board.service.PostService;
 import com.board.web.dto.post.PostRequestDto;
 import com.board.web.dto.post.PostResponseDto;
 import com.board.web.dto.post.PostUpdateDto;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,12 +45,13 @@ public class PostApiController {
   }
 
   @PutMapping("/post/{id}")
-  public void update(@PathVariable Long id, @RequestBody PostUpdateDto postUpdateDto) {
-    postService.update(id, postUpdateDto);
+  public void update(@PathVariable Long id, @RequestBody PostUpdateDto postUpdateDto,
+      HttpSession session) {
+    postService.update(id, postUpdateDto, session);
   }
 
   @DeleteMapping("/post/{id}")
-  public void delete(@PathVariable Long id) {
-    postService.delete(id);
+  public void delete(@PathVariable Long id, HttpSession session) {
+    postService.delete(id, session);
   }
 }

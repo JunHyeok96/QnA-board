@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class UserResponseDto {
+
   private Long id;
   private String userId;
   private String name;

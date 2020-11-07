@@ -52,4 +52,11 @@ public class User extends BaseTimeEntity {
     }
     return newPassword.equals(password);
   }
+  public boolean matchUserId(String newUserId){
+    if (newUserId == null){
+      return false;
+    }
+    return newUserId.equals(userId);
+  }
+
 }

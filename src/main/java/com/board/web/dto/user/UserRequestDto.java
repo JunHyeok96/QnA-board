@@ -8,7 +8,7 @@ import lombok.Getter;
 public class UserRequestDto {
 
   private String userId;
-  private String name ;
+  private String name;
   private String password;
   private String email;
 
@@ -20,7 +20,7 @@ public class UserRequestDto {
     this.name = name;
   }
 
-  public User toEntity(){
+  public User toEntity() {
     return User.builder()
         .userId(this.userId)
         .email(this.email)

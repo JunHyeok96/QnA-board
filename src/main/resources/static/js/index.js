@@ -12,7 +12,7 @@ var main = {
     $('#btn-delete').on('click', function () {
       _this.delete();
     });
-    $('#btn-update-user').on('click', function (){
+    $('#btn-update-user').on('click', function () {
       _this.userUpdate();
     })
   },
@@ -58,7 +58,7 @@ var main = {
       alert('글이 수정되었습니다.');
       window.location.href = '/post/read/' + data.id;
     }).fail(function (error) {
-      alert(JSON.stringify(error));
+      alert('본인의 게시물만 수정할 수 있습니다.')
     });
   },
   userUpdate: function () {
@@ -83,7 +83,6 @@ var main = {
   },
   delete: function () {
     var id = $('#id').val();
-
     $.ajax({
       type: 'DELETE',
       url: '/post/' + id,
@@ -94,6 +93,7 @@ var main = {
       window.location.href = '/';
     }).fail(function (error) {
       alert(JSON.stringify(error));
+      alert('본인의 게시물만 삭제할 수 있습니다.')
     });
   }
 

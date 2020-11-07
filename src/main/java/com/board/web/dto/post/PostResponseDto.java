@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public class PostResponseDto implements Serializable {
+
   private Long id;
   private String userId;
   private String title;

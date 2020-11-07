@@ -20,7 +20,7 @@ public class HttpSessionUtils {
     return isLoginUser(session) ? (User) session.getAttribute(USER_SESSION_KEY) : null;
   }
 
-  public static void logout(HttpSession session){
+  public static void logout(HttpSession session) {
     session.removeAttribute(HttpSessionUtils.USER_SESSION_KEY);
   }
 
