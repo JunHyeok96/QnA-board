@@ -1,26 +1,24 @@
 {{>layout/header}}
 <h1>회원정보 수정</h1>
-<form method="post" action="/user/create">
-  <div class="form-group">
-    <label name="userId">사용자 아이디</label>
-    <input type="text" class="form-control" name="userId" value="{{user.userId}}"
-           aria-describedby="emailHelp">
-  </div>
-  <div class="form-group">
-    <label name="password">비밀번호</label>
-    <input type="password" class="form-control" value="{{user.password}}" name="password">
-  </div>
-  <div class="form-group">
-    <label name="name">이름</label>
-    <input type="text" class="form-control" name="name" value="{{user.name}}"
-           aria-describedby="emailHelp">
-  </div>
-  <div class="form-group">
-    <label name="email">이메일</label>
-    <input type="text" class="form-control" name="email" value="{{user.email}}"
-           aria-describedby="emailHelp">
-  </div>
-
-  <button type="submit" class="btn btn-primary" style="float: right">확인</button>
-</form>
+<div class="form-group">
+  <label name="userId">사용자 아이디</label>
+  <input type="text" class="form-control" id="userId" value="{{user.userId}}"
+         aria-describedby="emailHelp" disabled>
+</div>
+<div class="form-group">
+  <label name="password">비밀번호</label>
+  <input type="password" class="form-control" value="{{user.password}}" id="password">
+</div>
+<div class="form-group">
+  <label name="name">이름</label>
+  <input type="text" class="form-control" id="name" value="{{user.name}}"
+         aria-describedby="emailHelp">
+</div>
+<div class="form-group">
+  <label name="email">이메일</label>
+  <input type="text" class="form-control" id="email" value="{{user.email}}"
+         aria-describedby="emailHelp">
+</div>
+<input type="hidden" id="id" value="{{user.id}}">
+<input type="button" class="btn btn-primary" id="btn-update-user" value="확인" style="float: right"/>
 {{>layout/footer}}

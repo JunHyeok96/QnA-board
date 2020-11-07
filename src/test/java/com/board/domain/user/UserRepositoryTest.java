@@ -33,11 +33,10 @@ public class UserRepositoryTest {
         .email(email)
         .build();
 
-    userRepository.save(userRequestDto.toEntity());
+    Long save_id = userRepository.save(userRequestDto.toEntity()).getId();
 
     //when
-    List<User> userAll = userRepository.findAll();
-    User user = userAll.get(0);
+    User user = userRepository.findById(save_id).get();
 
     //then
     assertThat(user.getName()).isEqualTo(name);

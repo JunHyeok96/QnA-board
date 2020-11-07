@@ -12,6 +12,7 @@ import com.board.web.dto.post.PostResponseDto;
 import com.board.web.dto.post.PostUpdateDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.util.Optional;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +32,7 @@ import java.util.List;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
-public class PostControllerTest {
+public class PostApiControllerTest {
 
   @LocalServerPort
   private int port;
@@ -201,15 +202,13 @@ public class PostControllerTest {
 
     Long id = postRepository.save(postRequestDto.toEntity()).getId();
 
-    assertThat(postRepository.findAll().size()).isEqualTo(1);
-
     String url = "http://localhost:" + port + "/post/" + id.toString();
 
     mvc.perform(MockMvcRequestBuilders.delete(url)
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
 
-    assertThat(postRepository.findAll().size()).isEqualTo(0);
+    assertThat(postRepository.findById(id)).isEqualTo(Optional.empty());
 
   }
 }

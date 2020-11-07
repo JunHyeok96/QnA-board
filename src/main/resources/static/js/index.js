@@ -12,6 +12,9 @@ var main = {
     $('#btn-delete').on('click', function () {
       _this.delete();
     });
+    $('#btn-update-user').on('click', function (){
+      _this.userUpdate();
+    })
   },
   save: function () {
     var data = {
@@ -54,6 +57,26 @@ var main = {
     }).done(function () {
       alert('글이 수정되었습니다.');
       window.location.href = '/post/read/' + data.id;
+    }).fail(function (error) {
+      alert(JSON.stringify(error));
+    });
+  },
+  userUpdate: function () {
+    var data = {
+      id: $('#id').val(),
+      password: $('#password').val(),
+      name: $('#name').val(),
+      email: $('#email').val()
+    };
+    $.ajax({
+      type: 'PUT',
+      url: '/user/' + data.id + "/update",
+      dataType: 'text',
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify(data)
+    }).done(function () {
+      alert('정보가 수정되었습니다.');
+      window.location.href = '/';
     }).fail(function (error) {
       alert(JSON.stringify(error));
     });

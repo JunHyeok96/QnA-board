@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
 import com.board.web.dto.user.UserRequestDto;
+import com.board.web.dto.user.UserUpdateDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.collection.IsCollectionWithSize;
 import org.junit.After;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -91,11 +93,12 @@ public class UserControllerTest {
         .build();
 
     userRepository.save(userRequestDto.toEntity());
+    int size = userRepository.findAll().size();
 
     String url = "http://localhost:" + port + "/user/list";
     this.mvc.perform(MockMvcRequestBuilders.get(url))
         .andExpect(status().isOk())
-        .andExpect(model().attribute("users", IsCollectionWithSize.hasSize(1)));
+        .andExpect(model().attribute("users", IsCollectionWithSize.hasSize(size)));
   }
 
   @Test
@@ -106,6 +109,8 @@ public class UserControllerTest {
     String updateName = "제이그래머";
     String updatePassword = "wpdlrmfoaj";
 
+    MockHttpSession session = new MockHttpSession();
+
     UserRequestDto userRequestDto = UserRequestDto.builder()
         .userId(id)
         .name("이준혁")
@@ -115,8 +120,9 @@ public class UserControllerTest {
 
     Long saveId = userRepository.save(userRequestDto.toEntity()).getId();
 
-    UserRequestDto updateDto = UserRequestDto.builder()
-        .userId(id)
+    session.setAttribute("sessionedUser", userRepository.findById(saveId).get());
+
+    UserUpdateDto updateDto = UserUpdateDto.builder()
         .name(updateName)
         .password(updatePassword)
         .email(email)
@@ -125,7 +131,8 @@ public class UserControllerTest {
     String url = "http://localhost:" + port + "/user/" + saveId + "/update";
 
     this.mvc.perform(put(url).contentType(MediaType.APPLICATION_JSON)
-        .content(new ObjectMapper().writeValueAsString(updateDto)))
+        .content(new ObjectMapper().writeValueAsString(updateDto))
+        .session(session))
         .andExpect(status().isOk());
 
     //then

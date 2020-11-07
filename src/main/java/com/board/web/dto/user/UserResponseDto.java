@@ -16,7 +16,7 @@ public class UserResponseDto {
     this.email = entry.getEmail();
     this.userId = entry.getUserId();
     this.password = entry.getPassword();
-    this.name = entry.getPassword();
+    this.name = entry.getName();
   }
 
   @Override
