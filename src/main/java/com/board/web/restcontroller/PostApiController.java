@@ -1,4 +1,4 @@
-package com.board.web;
+package com.board.web.restcontroller;
 
 import com.board.service.PostService;
 import com.board.web.dto.post.PostRequestDto;
@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,12 +46,21 @@ public class PostApiController {
 
   @PutMapping("/post/{id}")
   public void update(@PathVariable Long id, @RequestBody PostUpdateDto postUpdateDto,
-      HttpSession session) {
-    postService.update(id, postUpdateDto, session);
+      HttpSession session, HttpServletResponse response) {
+    try {
+      postService.update(id, postUpdateDto, session);
+    } catch (IllegalStateException e) {
+      response.setStatus(401);
+    }
   }
 
   @DeleteMapping("/post/{id}")
-  public void delete(@PathVariable Long id, HttpSession session) {
-    postService.delete(id, session);
+  public void delete(@PathVariable Long id, HttpSession session, HttpServletResponse response) {
+    try {
+      postService.delete(id, session);
+    } catch (IllegalStateException e) {
+      response.setStatus(401);
+    }
   }
+
 }

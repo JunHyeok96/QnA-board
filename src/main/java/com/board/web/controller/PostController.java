@@ -1,7 +1,11 @@
-package com.board.web;
+package com.board.web.controller;
 
 import com.board.service.PostService;
+import com.board.web.dto.post.PostResponseDto;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +34,14 @@ public class PostController {
   }
 
   @GetMapping("/post/update/{id}")
-  public String postUpdate(@PathVariable Long id, Model model) {
+  public String postUpdate(@PathVariable Long id, HttpSession session,
+      Model model, HttpServletResponse response) throws Exception {
+    try {
+      postService.matchAuthor(id, session);
+    } catch (IllegalStateException e) {
+      response.setStatus(401);
+      return null;
+    }
     model.addAttribute("post", postService.findById(id));
     return "post/update";
   }

@@ -25,7 +25,7 @@ public class PostService {
 
   @Transactional(readOnly = true)
   public List<PostResponseDto> findAllQuestion() {
-    return postRepository.findByPostType(PostType.Q)
+    return postRepository.findByPostTypeOrderByCreateDateDesc(PostType.Q)
         .stream()
         .map(PostResponseDto::new)
         .collect(Collectors.toList());
@@ -54,30 +54,29 @@ public class PostService {
   public Long update(Long id, PostUpdateDto postUpdateDto, HttpSession session) {
     Post post = postRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물"));
-    if (!HttpSessionUtils.isLoginUser(session)) {
-      throw new IllegalStateException("로그인되지 않은 상태에서 게시물 수정 접근");
-    }
-    User user = HttpSessionUtils.getUserFromSession(session);
-    if (user.matchUserId(postRepository.findById(id).get().getUserId())) {
-      post.update(postUpdateDto.getTitle(), postUpdateDto.getContent());
-      log.info(user.getId() + "님의 id : " + id + "게시글이 업데이트되었습니다.");
-    } else {
-      throw new IllegalStateException("타인의 게시물 삭제 접근");
-    }
+    User user = matchAuthor(id, session);
+    post.update(postUpdateDto.getTitle(), postUpdateDto.getContent());
+    log.info(user.getUserId() + "님의 id : " + id + " 게시글이 업데이트되었습니다.");
     return id;
   }
 
   @Transactional
   public void delete(Long id, HttpSession session) {
+    User user = matchAuthor(id, session);
+    postRepository.deleteById(id);
+    log.info(user.getUserId() + "님의 id : " + id + " 게시글이 삭제되었습니다.");
+  }
+
+  public User matchAuthor(Long id, HttpSession session) {
     if (!HttpSessionUtils.isLoginUser(session)) {
-      throw new IllegalStateException("로그인되지 않은 상태에서 게시물 삭제 접근");
+      throw new IllegalStateException("로그인되지 않았습니다.");
     }
     User user = HttpSessionUtils.getUserFromSession(session);
+    log.info(user.getUserId());
     if (user.matchUserId(postRepository.findById(id).get().getUserId())) {
-      postRepository.deleteById(id);
-      log.info(user.getId() + "님의 id : " + id + "게시글이 삭제되었습니다.");
+      return user;
     } else {
-      throw new IllegalStateException("타인의 게시물 삭제 접근");
+      throw new IllegalStateException("본인의 게시물이 아닙니다!");
     }
   }
 }

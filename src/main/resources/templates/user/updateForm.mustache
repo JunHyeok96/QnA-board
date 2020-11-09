@@ -22,3 +22,35 @@
 <input type="hidden" id="id" value="{{user.id}}">
 <input type="button" class="btn btn-primary" id="btn-update-user" value="확인" style="float: right"/>
 {{>layout/footer}}
+
+<script>
+  var main = {
+    init: function () {
+      var _this = this;
+      $('#btn-update').on('click', function () {
+        _this.update();
+      })
+    },
+    update: function () {
+      var data = {
+        id: $('#id').val(),
+        password: $('#password').val(),
+        name: $('#name').val(),
+        email: $('#email').val()
+      };
+      $.ajax({
+        type: 'PUT',
+        url: '/user/' + data.id + "/update",
+        dataType: 'text',
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(data)
+      }).done(function () {
+        alert('정보가 수정되었습니다.');
+        window.location.href = '/';
+      }).fail(function (error) {
+        alert(JSON.stringify(error));
+      });
+    },
+  };
+  main.init();
+</script>

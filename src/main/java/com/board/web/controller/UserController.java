@@ -1,20 +1,17 @@
-package com.board.web;
+package com.board.web.controller;
 
 import com.board.domain.user.User;
 import com.board.service.UserService;
+import com.board.web.HttpSessionUtils;
 import com.board.web.dto.user.UserRequestDto;
-import com.board.web.dto.user.UserUpdateDto;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,12 +28,12 @@ public class UserController {
   @PostMapping("/user/create")
   public String create(UserRequestDto user) {
     userService.save(user);
-    return "redirect:user/list";
+    return "redirect:/";
   }
 
   @GetMapping("/user/login")
-  public String loginForm() {
-    return "user/login";
+  public String loginForm(HttpSession session) {
+    return HttpSessionUtils.isLoginUser(session) ? "/" : "user/login";
   }
 
   @PostMapping("/user/login")

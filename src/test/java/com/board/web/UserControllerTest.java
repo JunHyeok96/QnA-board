@@ -49,25 +49,24 @@ public class UserControllerTest {
   private final String email = "j005580@naver.com";
   private final String password = "abcde";
 
-  UserRequestDto userRequestDto;
+  private final UserRequestDto userRequestDto = UserRequestDto.builder()
+      .userId(id)
+      .name(name)
+      .password(password)
+      .email(email)
+      .build();
+  ;
 
   MockHttpSession session = new MockHttpSession();
 
   @Before
   public void setup() {
     this.mvc = MockMvcBuilders.webAppContextSetup(context).build();
-    userRequestDto = UserRequestDto.builder()
-        .userId(id)
-        .name(name)
-        .password(password)
-        .email(email)
-        .build();
   }
 
   @After
   public void tearDown() throws Exception {
     userRepository.deleteAll();
-    userRequestDto = null;
   }
 
   @Test
@@ -94,7 +93,6 @@ public class UserControllerTest {
 
   @Test
   public void 사용자목록조회() throws Exception {
-
     userRepository.save(userRequestDto.toEntity());
     int size = userRepository.findAll().size();
 

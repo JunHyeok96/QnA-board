@@ -32,10 +32,10 @@ deploy:
     secret_access_key: $AWS_SECRET_KEY
     bucket: spring-deploy-test
     region: ap-northeast-2
-    skip_cleanup: true
+    cleanup: true
     acl: private
     local_dir: deploy
-    wait-until-deploy: true
+    wait_until_deploy: true
     on:
       all_branches: true
 
@@ -48,7 +48,7 @@ deploy:
     application: QnA-board
     deployment_group: QnA-board-group
     region: ap-northeast-2
-    wait-until-deployed: true
+    wait_until_deployed: true
     on:
       all_branches: true
 

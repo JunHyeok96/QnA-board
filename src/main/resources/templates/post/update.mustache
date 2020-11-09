@@ -14,3 +14,35 @@
 </form>
 <button type="button" id="btn-update" class="btn btn-primary">확인</button>
 {{>layout/footer}}
+
+<script>
+  var main = {
+    init: function () {
+      var _this = this;
+      $('#btn-update').on('click', function () {
+        _this.update();
+      })
+    },
+    update: function () {
+      var data = {
+        id: $('#id').val(),
+        title: $('#title').val(),
+        content: $('#content').val()
+      };
+      $.ajax({
+        type: 'PUT',
+        url: '/post/' + data.id,
+        dataType: 'text',
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(data)
+      }).done(function () {
+        alert('글이 수정되었습니다.');
+        window.location.href = '/post/read/' + data.id;
+      }).fail(function (error) {
+        alert('본인의 게시물만 수정할 수 있습니다.')
+      });
+    },
+  };
+
+  main.init();
+</script>

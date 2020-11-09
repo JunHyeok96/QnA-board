@@ -7,8 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.board.domain.post.Post;
 import com.board.domain.post.PostRepository;
-import com.board.domain.user.UserRepository;
-import com.board.service.PostService;
+import com.board.domain.user.User;
 import com.board.web.dto.post.PostRequestDto;
 import com.board.web.dto.post.PostResponseDto;
 import com.board.web.dto.post.PostUpdateDto;
@@ -33,20 +32,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import java.util.List;
-import org.springframework.web.util.NestedServletException;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
-public class PostApiControllerTest {
+public class PostControllerTest {
 
   @LocalServerPort
   private int port;
-
-  @Autowired
-  private PostRepository postRepository;
-
-  @Autowired
-  private UserRepository userRepository;
 
   private MockMvc mvc;
 
@@ -55,10 +47,28 @@ public class PostApiControllerTest {
   @Autowired
   private WebApplicationContext webApplicationContext;
 
+  @Autowired
+  private PostRepository postRepository;
+
   private final String title = "title";
   private final String content = "content";
   private final String postType = "Q";
   private final String userId = "test-user";
+
+  private final PostRequestDto postRequestDto = PostRequestDto.builder()
+      .title(title)
+      .content(content)
+      .postType(postType)
+      .userId(userId)
+      .build();
+
+
+  private final User user = UserRequestDto.builder()
+      .userId(userId)
+      .name("a")
+      .password("1234")
+      .email("aa@22.com")
+      .build().toEntity();
 
   MockHttpSession session = new MockHttpSession();
 
@@ -67,32 +77,15 @@ public class PostApiControllerTest {
     this.mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     mapper = new ObjectMapper();
     mapper.registerModule(new JavaTimeModule());
-
-    UserRequestDto userRequestDto = UserRequestDto.builder()
-        .userId(userId)
-        .name("a")
-        .password("1234")
-        .email("aa@22.com")
-        .build();
-    userRepository.save(userRequestDto.toEntity());
   }
 
   @After
   public void tearDown() throws Exception {
     postRepository.deleteAll();
-    userRepository.deleteAll();
-    ;
   }
 
   @Test
   public void 단일게시물조회() throws Exception {
-    //given
-    PostRequestDto postRequestDto = PostRequestDto.builder()
-        .title(title)
-        .content(content)
-        .postType(postType)
-        .userId(userId)
-        .build();
     Long id = postRepository.save(postRequestDto.toEntity()).getId();
     String url = "http://localhost:" + port + "/post/" + id.toString();
 
@@ -114,13 +107,6 @@ public class PostApiControllerTest {
 
   @Test
   public void 게시물리스트조회() throws Exception {
-    PostRequestDto postRequestDto = PostRequestDto.builder()
-        .title(title)
-        .content(content)
-        .postType(postType)
-        .userId(userId)
-        .build();
-
     postRepository.save(postRequestDto.toEntity());
     postRepository.save(postRequestDto.toEntity());
     postRepository.save(postRequestDto.toEntity());
@@ -134,15 +120,8 @@ public class PostApiControllerTest {
 
   @Test
   public void 게시글수정() throws Exception {
-    String updateTitle = "updateTitle";
     String updateContent = "updateContent";
-
-    PostRequestDto postRequestDto = PostRequestDto.builder()
-        .title(title)
-        .content(content)
-        .postType(postType)
-        .userId(userId)
-        .build();
+    String updateTitle = "updateTitle";
 
     PostUpdateDto postUpdateDto = PostUpdateDto.builder()
         .title(updateTitle)
@@ -151,8 +130,7 @@ public class PostApiControllerTest {
 
     Post post = postRepository.save(postRequestDto.toEntity());
 
-    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY,
-        userRepository.findByUserId(post.getUserId()));
+    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user);
 
     String url = "http://localhost:" + port + "/post/" + post.getId();
 
@@ -172,13 +150,6 @@ public class PostApiControllerTest {
 
   @Test
   public void 게시물저장() throws Exception {
-    PostRequestDto postRequestDto = PostRequestDto.builder()
-        .title(title)
-        .content(content)
-        .postType(postType)
-        .userId(userId)
-        .build();
-
     String url = "http://localhost:" + port + "/post/";
 
     mvc.perform(MockMvcRequestBuilders.post(url)
@@ -197,17 +168,8 @@ public class PostApiControllerTest {
 
   @Test
   public void 자신의게시글삭제() throws Exception {
-
-    PostRequestDto postRequestDto = PostRequestDto.builder()
-        .title(title)
-        .content(content)
-        .postType(postType)
-        .userId(userId)
-        .build();
-
     Post post = postRepository.save(postRequestDto.toEntity());
-    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY,
-        userRepository.findByUserId(post.getUserId()));
+    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user);
 
     String url = "http://localhost:" + port + "/post/" + post.getId().toString();
 
@@ -220,44 +182,17 @@ public class PostApiControllerTest {
 
   }
 
-  @Test(expected = NestedServletException.class)
+  @Test
   public void 타인의게시글삭제() throws Exception {
-
-    PostRequestDto postRequestDto = PostRequestDto.builder()
-        .title(title)
-        .content(content)
-        .postType(postType)
-        .userId(userId + "_2")
-        .build();
-
-    Post post = postRepository.save(postRequestDto.toEntity());
-    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY,
-        userRepository.findByUserId(post.getUserId()));
-
-    String url = "http://localhost:" + port + "/post/" + post.getId().toString();
-
-    mvc.perform(MockMvcRequestBuilders.delete(url)
-        .contentType(MediaType.APPLICATION_JSON)
-        .session(session))
-        .andExpect(status().isOk());
-
-    assertThat(postRepository.findById(post.getId())).isEqualTo(Optional.empty());
-
-  }
-
-  @Test(expected = NestedServletException.class)
-  public void 타인의게시글수정() throws Exception {
-
-    PostRequestDto postRequestDto = PostRequestDto.builder()
-        .title(title)
-        .content(content)
-        .postType(postType)
-        .userId(userId + "_2")
-        .build();
+    User newUser = UserRequestDto.builder()
+        .userId(userId + "_1")
+        .name("a")
+        .password("1234")
+        .email("aa@22.com")
+        .build().toEntity();
 
     Post post = postRepository.save(postRequestDto.toEntity());
-    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY,
-        userRepository.findByUserId(post.getUserId()));
+    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, newUser);
 
     String url = "http://localhost:" + port + "/post/" + post.getId().toString();
 
@@ -266,8 +201,39 @@ public class PostApiControllerTest {
         .session(session))
         .andExpect(status().isUnauthorized());
 
-    assertThat(postRepository.findById(post.getId())).isEqualTo(Optional.empty());
+    assertThat(postRepository.findById(post.getId())).isNotEmpty();
 
   }
 
+  @Test
+  public void 타인의게시글수정() throws Exception {
+    User newUser = UserRequestDto.builder()
+        .userId(userId + "_1")
+        .name("a")
+        .password("1234")
+        .email("aa@22.com")
+        .build().toEntity();
+
+    PostUpdateDto postUpdateDto = PostUpdateDto.builder()
+        .title("abcd")
+        .content("12345")
+        .build();
+
+    Post post = postRepository.save(postRequestDto.toEntity());
+    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, newUser);
+
+    String url = "http://localhost:" + port + "/post/" + post.getId().toString();
+
+    mvc.perform(MockMvcRequestBuilders.put(url)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(new ObjectMapper().writeValueAsString(postUpdateDto))
+        .session(session))
+        .andExpect(status().isUnauthorized());
+
+    assertThat(postRepository.findById(post.getId()).get().getTitle())
+        .isEqualTo(postRequestDto.getTitle());
+    assertThat(postRepository.findById(post.getId()).get().getContent())
+        .isEqualTo(postRequestDto.getContent());
+
+  }
 }
