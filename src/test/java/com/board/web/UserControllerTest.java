@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
+import com.board.web.dto.user.UserLoginRequestDto;
 import com.board.web.dto.user.UserRequestDto;
 import com.board.web.dto.user.UserUpdateDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -134,8 +135,8 @@ public class UserControllerTest {
     assertThat(user.getPassword()).isEqualTo(updatePassword);
   }
 
-  @Test(expected = NestedServletException.class)
-  public void 타인의정보수정() throws Exception {
+  @Test
+  public void 타인의정보수정_실패() throws Exception {
 
     //given
     String updateName = "제이그래머";
@@ -151,7 +152,7 @@ public class UserControllerTest {
         .build();
     userRepository.save(newUser.toEntity()).getId();
 
-    session.setAttribute("sessionedUser", newUser);
+    session.setAttribute("sessionedUser", newUser.toEntity());
 
     UserUpdateDto updateDto = UserUpdateDto.builder()
         .name(updateName)
@@ -165,14 +166,78 @@ public class UserControllerTest {
     this.mvc.perform(put(url).contentType(MediaType.APPLICATION_JSON)
         .content(new ObjectMapper().writeValueAsString(updateDto))
         .session(session))
-        .andExpect(status().isOk());
+        .andExpect(status().isUnauthorized());
 
     //then
-    User user = userRepository.findById(saveId)
-        .orElseThrow(() -> new IllegalArgumentException("잘못된 id정보"));
-
+    User user = userRepository.findById(saveId).get();
     assertThat(user.getName()).isEqualTo(name);
     assertThat(user.getPassword()).isEqualTo(password);
+  }
+
+  @Test
+  public void 로그인성공() throws Exception {
+    userRepository.save(userRequestDto.toEntity()).getId();
+
+
+    String url = "http://localhost:" + port + "/user/login";
+
+    //when
+    this.mvc.perform(MockMvcRequestBuilders.post(url)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(new ObjectMapper().writeValueAsString(new UserLoginRequestDto(id, password))))
+        .andExpect(status().is3xxRedirection());
+  }
+
+  @Test
+  public void 로그인실패_비밀번호() throws Exception {
+    session.setAttribute("sessionedUser", userRequestDto.toEntity());
+
+    String url = "http://localhost:" + port + "/user/login";
+
+    //when
+    this.mvc.perform(MockMvcRequestBuilders.post(url)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(new ObjectMapper().writeValueAsString(new UserLoginRequestDto(id, " "))))
+        .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  public void 로그인실패_아이디() throws Exception {
+    session.setAttribute("sessionedUser", userRequestDto.toEntity());
+
+    String url = "http://localhost:" + port + "/user/login";
+
+    //when
+    this.mvc.perform(MockMvcRequestBuilders.post(url)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(new ObjectMapper().writeValueAsString(new UserLoginRequestDto(" ", password))))
+        .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  public void 로그인후_로그인폼접근() throws Exception {
+    session.setAttribute("sessionedUser", userRequestDto.toEntity());
+
+    String url = "http://localhost:" + port + "/user/login";
+
+    //when
+    this.mvc.perform(MockMvcRequestBuilders.get(url)
+        .session(session))
+        .andExpect(status().is3xxRedirection());
+  }
+
+  @Test
+  public void 로그인후_로그인시도() throws Exception {
+    session.setAttribute("sessionedUser", userRequestDto.toEntity());
+
+    String url = "http://localhost:" + port + "/user/login";
+
+    //when
+    this.mvc.perform(MockMvcRequestBuilders.post(url)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(new ObjectMapper().writeValueAsString(new UserLoginRequestDto(id, password)))
+        .session(session))
+        .andExpect(status().is3xxRedirection());
   }
 
 }

@@ -28,10 +28,18 @@ public class UserService {
   }
 
   @Transactional
-  public Long update(Long id, UserUpdateDto dto) {
-    User user = userRepository.findById(id)
+  public Long update(Long id, UserUpdateDto dto, HttpSession session) {
+    if (!HttpSessionUtils.isLoginUser(session)) {
+      throw new IllegalStateException("로그인이 필요합니다.");
+    }
+    User updateUser = userRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. id=" + id));
-    user.update(dto.getPassword(), dto.getName(), dto.getEmail());
+    User user = HttpSessionUtils.getUserFromSession(session);
+    if (!user.getId().equals(id)) {
+      throw new IllegalStateException("수정 권한이 없습니다.");
+    }
+
+    updateUser.update(dto.getPassword(), dto.getName(), dto.getEmail());
     return id;
   }
 
@@ -51,6 +59,9 @@ public class UserService {
 
   @Transactional(readOnly = true)
   public boolean login(String userId, String password, HttpSession session) {
+    if (HttpSessionUtils.isLoginUser(session)) {
+      return true;
+    }
     User user = userRepository.findByUserId(userId);
     if (user == null) {
       log.info("id : " + userId + "는 존재하지 않는 유저입니다.");

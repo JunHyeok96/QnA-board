@@ -4,8 +4,10 @@ import com.board.domain.user.User;
 import com.board.service.UserService;
 import com.board.web.HttpSessionUtils;
 import com.board.web.dto.user.UserUpdateDto;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,13 +21,11 @@ public class UserApiController {
 
   @PutMapping("/user/{id}/update")
   public void update(@PathVariable Long id, @RequestBody UserUpdateDto updateUser,
-      HttpSession session) {
-    if (!HttpSessionUtils.isLoginUser(session)) {
-      throw new IllegalStateException("로그인이 필요합니다.");
-    } else {
-      User user = HttpSessionUtils.getUserFromSession(session);
-      userService.update(user.getId(), updateUser);
+      HttpSession session, HttpServletResponse response) {
+    try {
+      userService.update(id, updateUser, session);
+    } catch (Exception e) {
+      response.setStatus(HttpStatus.UNAUTHORIZED.value());
     }
   }
-
 }
