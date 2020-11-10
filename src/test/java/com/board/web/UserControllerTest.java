@@ -26,7 +26,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import java.util.List;
-import org.springframework.web.util.NestedServletException;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
@@ -110,8 +109,8 @@ public class UserControllerTest {
     String updateName = "제이그래머";
     String updatePassword = "wpdlrmfoaj";
 
-    Long saveId = userRepository.save(userRequestDto.toEntity()).getId();
-    session.setAttribute("sessionedUser", userRepository.findById(saveId).get());
+    String saveId = userRepository.save(userRequestDto.toEntity()).getUserId();
+    session.setAttribute("sessionedUser", userRepository.findByUserId(saveId));
 
     UserUpdateDto updateDto = UserUpdateDto.builder()
         .name(updateName)
@@ -128,8 +127,7 @@ public class UserControllerTest {
         .andExpect(status().isOk());
 
     //then
-    User user = userRepository.findById(saveId)
-        .orElseThrow(() -> new IllegalArgumentException("잘못된 id정보"));
+    User user = userRepository.findByUserId(saveId);
 
     assertThat(user.getName()).isEqualTo(updateName);
     assertThat(user.getPassword()).isEqualTo(updatePassword);
@@ -142,7 +140,7 @@ public class UserControllerTest {
     String updateName = "제이그래머";
     String updatePassword = "wpdlrmfoaj";
 
-    Long saveId = userRepository.save(userRequestDto.toEntity()).getId();
+    String saveId = userRepository.save(userRequestDto.toEntity()).getUserId();
 
     UserRequestDto newUser = UserRequestDto.builder()
         .userId(id + "_2")
@@ -169,7 +167,7 @@ public class UserControllerTest {
         .andExpect(status().isUnauthorized());
 
     //then
-    User user = userRepository.findById(saveId).get();
+    User user = userRepository.findByUserId(saveId);
     assertThat(user.getName()).isEqualTo(name);
     assertThat(user.getPassword()).isEqualTo(password);
   }

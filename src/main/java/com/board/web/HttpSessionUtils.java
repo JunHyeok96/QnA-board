@@ -5,10 +5,6 @@ import javax.servlet.http.HttpSession;
 
 public class HttpSessionUtils {
 
-  //인스턴스 생성 방지
-  private HttpSessionUtils() {
-  }
-
   public static final String USER_SESSION_KEY = "sessionedUser";
 
   public static boolean isLoginUser(HttpSession session) {

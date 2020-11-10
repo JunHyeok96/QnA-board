@@ -19,7 +19,7 @@
   <input type="text" class="form-control" id="email" value="{{user.email}}"
          aria-describedby="emailHelp" required="required">
 </div>
-<input type="button" class="btn btn-primary" id="btn-update-user" value="확인" style="float: right"/>
+<input type="button" class="btn btn-primary" id="btn-update" value="확인" style="float: right"/>
 {{>layout/footer}}
 
 <script>
@@ -39,7 +39,7 @@
       };
       $.ajax({
         type: 'PUT',
-        url: '/user/' + data.id + "/update",
+        url: '/user/' + data.userId + "/update",
         dataType: 'text',
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(data)

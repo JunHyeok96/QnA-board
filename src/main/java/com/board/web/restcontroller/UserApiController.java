@@ -19,11 +19,11 @@ public class UserApiController {
 
   private final UserService userService;
 
-  @PutMapping("/user/{id}/update")
-  public void update(@PathVariable Long id, @RequestBody UserUpdateDto updateUser,
+  @PutMapping("/user/{userId}/update")
+  public void update(@PathVariable String userId, @RequestBody UserUpdateDto updateUser,
       HttpSession session, HttpServletResponse response) {
     try {
-      userService.update(id, updateUser, session);
+      userService.update(userId, updateUser, session);
     } catch (Exception e) {
       response.setStatus(HttpStatus.UNAUTHORIZED.value());
     }

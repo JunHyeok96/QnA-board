@@ -44,6 +44,12 @@ public class PostService {
         .collect(Collectors.toList());
   }
 
+  @Transactional(readOnly = true)
+  public List<PostResponseDto> findMyPosts(String userId){ return null;}
+
+  @Transactional(readOnly = true)
+  public List<PostResponseDto> findMyAnswer(String userId){return null;}
+
   @Transactional
   public Long save(PostRequestDto postRequestDto) {
     Long id = postRepository.save(postRequestDto.toEntity()).getId();
@@ -79,4 +85,6 @@ public class PostService {
       throw new IllegalStateException("본인의 게시물이 아닙니다!");
     }
   }
+
+
 }

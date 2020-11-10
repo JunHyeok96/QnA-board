@@ -23,23 +23,29 @@ public class UserService {
 
   @Transactional
   public Long save(UserRequestDto dto) {
-    Long id = userRepository.save(dto.toEntity()).getId();
-    return id;
+    User user = userRepository.findByUserId(dto.getUserId());
+    if(user == null){
+      Long id = userRepository.save(dto.toEntity()).getId();
+      return id;
+    }else {
+      throw new IllegalStateException("이미 등록된 유저입니다.");
+    }
   }
 
   @Transactional
-  public Long update(Long id, UserUpdateDto dto, HttpSession session) {
+  public Long update(String userId, UserUpdateDto dto, HttpSession session) {
     if (!HttpSessionUtils.isLoginUser(session)) {
       throw new IllegalStateException("로그인이 필요합니다.");
     }
-    User updateUser = userRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. id=" + id));
+    User updateUser = userRepository.findByUserId(userId);
+    if(updateUser == null){
+      throw new IllegalStateException("해당 유저가 없습니다. id=" + userId);
+    }
     User user = HttpSessionUtils.getUserFromSession(session);
-    if (!user.getId().equals(id)) {
+    if (!user.matchUserId(userId)) {
       throw new IllegalStateException("수정 권한이 없습니다.");
     }
-
-    updateUser.update(dto.getPassword(), dto.getName(), dto.getEmail());
+    Long id = updateUser.update(dto.getPassword(), dto.getName(), dto.getEmail()).getId();
     return id;
   }
 

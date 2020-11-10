@@ -63,10 +63,10 @@ public class UserController {
     return "user/list";
   }
 
-  @GetMapping("/user/{id}/form")
-  public String userForm(@PathVariable Long id, Model model, HttpSession session) {
+  @GetMapping("/user/form/update")
+  public String userForm(Model model, HttpSession session) {
     if (!HttpSessionUtils.isLoginUser(session)) {
-      return "redirect:user/login";
+      return "redirect:/user/login";
     } else {
       User user = HttpSessionUtils.getUserFromSession(session);
       model.addAttribute("user", userService.findById(user.getId()));

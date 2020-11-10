@@ -15,24 +15,6 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        {{^sessionedUser}}
-          <li class="nav-item">
-            <a class="nav-link" href="/user/login">로그인</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/user/form">회원가입</a>
-          </li>
-        {{/sessionedUser}}
-        {{#sessionedUser}}
-          <li class="nav-item">
-            <a class="nav-link" href="/user/logout">로그아웃</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/user/{{id}}/form">개인정보수정</a>
-          </li>
-        {{/sessionedUser}}
-      </ul>
     </div>
     <form class="form-inline">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -44,15 +26,22 @@
         글쓰기
       </a>
     </button>
-    <ul class="nav nav-pills">
+    <ul class="nav nav-pills" style="margin-right: 30px">
 
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-           aria-haspopup="true" aria-expanded="false">사용자 정보</a>
+           aria-haspopup="true" aria-expanded="false">프로필</a>
         <div class="dropdown-menu">
-          <a class="dropdown-item" href="#">정보 수정</a>
+        {{^sessionedUser}}
+          <a class="dropdown-item" href="/user/login">로그인</a>
+          <a class="dropdown-item" href="/user/form">회원가입</a>
+        {{/sessionedUser}}
+        {{#sessionedUser}}
+          <a class="dropdown-item" href="/user/logout">로그아웃</a>
+          <a class="dropdown-item" href="/user/form/update">정보 수정</a>
           <a class="dropdown-item" href="#">내가 쓴 글</a>
-          <a class="dropdown-item" href="#">내가 남긴 댓글</a>
+          <a class="dropdown-item" href="#">내가 남긴 답변</a>
+        {{/sessionedUser}}
         </div>
       </li>
     </ul>
