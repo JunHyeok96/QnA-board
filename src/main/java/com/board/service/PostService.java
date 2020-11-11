@@ -37,6 +37,11 @@ public class PostService {
   }
 
   @Transactional(readOnly = true)
+  public Post findByIdToEntity(Long id) {
+    return postRepository.findById(id).get();
+  }
+
+  @Transactional(readOnly = true)
   public List<PostResponseDto> findAnswer(Long postId) {
     return postRepository.findByPostId(postId)
         .stream()
@@ -45,10 +50,14 @@ public class PostService {
   }
 
   @Transactional(readOnly = true)
-  public List<PostResponseDto> findMyPosts(String userId){ return null;}
+  public List<PostResponseDto> findMyPosts(String userId) {
+    return null;
+  }
 
   @Transactional(readOnly = true)
-  public List<PostResponseDto> findMyAnswer(String userId){return null;}
+  public List<PostResponseDto> findMyAnswer(String userId) {
+    return null;
+  }
 
   @Transactional
   public Long save(PostRequestDto postRequestDto) {
@@ -60,7 +69,7 @@ public class PostService {
   public Long update(Long id, PostUpdateDto postUpdateDto, HttpSession session) {
     Post post = postRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물"));
-    User user = matchAuthor(id, session);
+    User user = post.matchAuthor(session);
     post.update(postUpdateDto.getTitle(), postUpdateDto.getContent());
     log.info(user.getUserId() + "님의 id : " + id + " 게시글이 업데이트되었습니다.");
     return id;
@@ -68,22 +77,11 @@ public class PostService {
 
   @Transactional
   public void delete(Long id, HttpSession session) {
-    User user = matchAuthor(id, session);
+    Post post = postRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물"));
+    User user = post.matchAuthor(session);
     postRepository.deleteById(id);
     log.info(user.getUserId() + "님의 id : " + id + " 게시글이 삭제되었습니다.");
-  }
-
-  public User matchAuthor(Long id, HttpSession session) {
-    if (!HttpSessionUtils.isLoginUser(session)) {
-      throw new IllegalStateException("로그인되지 않았습니다.");
-    }
-    User user = HttpSessionUtils.getUserFromSession(session);
-    log.info(user.getUserId());
-    if (user.matchUserId(postRepository.findById(id).get().getUserId())) {
-      return user;
-    } else {
-      throw new IllegalStateException("본인의 게시물이 아닙니다!");
-    }
   }
 
 

@@ -7,6 +7,10 @@ public class HttpSessionUtils {
 
   public static final String USER_SESSION_KEY = "sessionedUser";
 
+  //인스턴스 생성 방지
+  private HttpSessionUtils() {
+  }
+
   public static boolean isLoginUser(HttpSession session) {
     Object sessionedUser = session.getAttribute(USER_SESSION_KEY);
     return sessionedUser == null ? false : true;

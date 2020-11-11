@@ -1,6 +1,8 @@
 package com.board.domain.post;
 
 import com.board.domain.BaseTimeEntity;
+import com.board.domain.user.User;
+import com.board.web.HttpSessionUtils;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,6 +10,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.servlet.http.HttpSession;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,5 +53,17 @@ public class Post extends BaseTimeEntity {
     this.title = title;
     this.content = content;
     return this;
+  }
+
+  public User matchAuthor(HttpSession session) {
+    if (!HttpSessionUtils.isLoginUser(session)) {
+      throw new IllegalStateException("로그인되지 않았습니다.");
+    }
+    User user = HttpSessionUtils.getUserFromSession(session);
+    if (user.matchUserId(this.userId)) {
+      return user;
+    } else {
+      throw new IllegalStateException("본인의 게시물이 아닙니다!");
+    }
   }
 }

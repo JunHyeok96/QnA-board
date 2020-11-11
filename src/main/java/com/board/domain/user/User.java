@@ -1,11 +1,13 @@
 package com.board.domain.user;
 
 import com.board.domain.BaseTimeEntity;
+import com.board.web.HttpSessionUtils;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.servlet.http.HttpSession;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -58,5 +60,6 @@ public class User extends BaseTimeEntity {
     }
     return newUserId.equals(userId);
   }
+
 
 }

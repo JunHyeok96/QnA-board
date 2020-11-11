@@ -1,6 +1,8 @@
 package com.board.web.controller;
 
+import com.board.domain.post.Post;
 import com.board.service.PostService;
+import com.board.web.HttpSessionUtils;
 import com.board.web.dto.post.PostResponseDto;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -37,7 +39,8 @@ public class PostController {
   public String postUpdate(@PathVariable Long id, HttpSession session,
       Model model, HttpServletResponse response) throws Exception {
     try {
-      postService.matchAuthor(id, session);
+      Post post = postService.findByIdToEntity(id);
+      post.matchAuthor(session);
     } catch (IllegalStateException e) {
       response.setStatus(401);
       return null;
