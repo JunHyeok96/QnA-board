@@ -164,7 +164,7 @@ public class UserControllerTest {
     this.mvc.perform(put(url).contentType(MediaType.APPLICATION_JSON)
         .content(new ObjectMapper().writeValueAsString(updateDto))
         .session(session))
-        .andExpect(status().isUnauthorized());
+        .andExpect(status().isForbidden());
 
     //then
     User user = userRepository.findByUserId(saveId);

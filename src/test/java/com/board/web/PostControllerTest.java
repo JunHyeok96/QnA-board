@@ -199,7 +199,7 @@ public class PostControllerTest {
     mvc.perform(MockMvcRequestBuilders.delete(url)
         .contentType(MediaType.APPLICATION_JSON)
         .session(session))
-        .andExpect(status().isUnauthorized());
+        .andExpect(status().isForbidden());
 
     assertThat(postRepository.findById(post.getId())).isNotEmpty();
 
@@ -228,7 +228,7 @@ public class PostControllerTest {
         .contentType(MediaType.APPLICATION_JSON)
         .content(new ObjectMapper().writeValueAsString(postUpdateDto))
         .session(session))
-        .andExpect(status().isUnauthorized());
+        .andExpect(status().isForbidden());
 
     assertThat(postRepository.findById(post.getId()).get().getTitle())
         .isEqualTo(postRequestDto.getTitle());

@@ -7,10 +7,12 @@ import static org.mockito.Mockito.when;
 
 import com.board.domain.post.Post;
 import com.board.domain.post.PostRepository;
+import com.board.domain.post.exception.MissmatchAuthor;
 import com.board.domain.user.User;
 import com.board.web.HttpSessionUtils;
 import com.board.web.dto.post.PostUpdateDto;
 import java.util.Optional;
+import javax.security.auth.login.LoginException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,6 +36,7 @@ public class PostServiceTest {
 
   @Mock
   private Post mockPost;
+
   @BeforeClass
   public static void beforeClass() {
     mockedSessionUtils = mockStatic(HttpSessionUtils.class);
@@ -47,7 +50,7 @@ public class PostServiceTest {
 
   @Test
   @DisplayName("게시글 수정")
-  public void updatePost(){
+  public void updatePost() {
     //given
     postService = new PostService(postRepository);
     Optional<Post> mockOptional = mock(Optional.class);
@@ -64,16 +67,16 @@ public class PostServiceTest {
     verify(mockPost).update(any(), any());
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test(expected = MissmatchAuthor.class)
   @DisplayName("게시글 수정 - 타인의 게시물")
-  public void failUpdatePost(){
+  public void failUpdatePost() {
     //given
     postService = new PostService(postRepository);
     Optional<Post> mockOptional = mock(Optional.class);
     PostUpdateDto mockPostUpdateDto = mock(PostUpdateDto.class);
     when(postRepository.findById(any())).thenReturn(mockOptional);
     when(mockOptional.orElseThrow(any())).thenReturn(mockPost);
-    when(mockPost.matchAuthor(any())).thenThrow(new IllegalStateException("로그인 실패"));
+    when(mockPost.matchAuthor(any())).thenThrow(new MissmatchAuthor("로그인 실패"));
 
     //when
     postService.update(0L, mockPostUpdateDto, mockHttpSession);
@@ -84,7 +87,7 @@ public class PostServiceTest {
 
   @Test
   @DisplayName("게시글 삭제")
-  public void deletePost(){
+  public void deletePost() {
     //given
     postService = new PostService(postRepository);
     Optional<Post> mockOptional = mock(Optional.class);
@@ -100,16 +103,16 @@ public class PostServiceTest {
     verify(postRepository).deleteById(any());
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test(expected = MissmatchAuthor.class)
   @DisplayName("게시글 삭제 - 타인의 게시물")
-  public void failDeletePost(){
+  public void failDeletePost() {
     //given
     postService = new PostService(postRepository);
     Optional<Post> mockOptional = mock(Optional.class);
     User mockUser = mock(User.class);
     when(postRepository.findById(any())).thenReturn(mockOptional);
     when(mockOptional.orElseThrow(any())).thenReturn(mockPost);
-    when(mockPost.matchAuthor(any())).thenThrow(new IllegalStateException("로그인 실패"));
+    when(mockPost.matchAuthor(any())).thenThrow(new MissmatchAuthor("로그인 실패"));
 
     //when
     postService.delete(0L, mockHttpSession);

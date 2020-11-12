@@ -1,7 +1,9 @@
 package com.board.domain.post;
 
 import com.board.domain.BaseTimeEntity;
+import com.board.domain.post.exception.MissmatchAuthor;
 import com.board.domain.user.User;
+import com.board.domain.user.exception.LoginException;
 import com.board.web.HttpSessionUtils;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -57,13 +59,13 @@ public class Post extends BaseTimeEntity {
 
   public User matchAuthor(HttpSession session) {
     if (!HttpSessionUtils.isLoginUser(session)) {
-      throw new IllegalStateException("로그인되지 않았습니다.");
+      throw new LoginException("로그인되지 않았습니다.");
     }
     User user = HttpSessionUtils.getUserFromSession(session);
     if (user.matchUserId(this.userId)) {
       return user;
     } else {
-      throw new IllegalStateException("본인의 게시물이 아닙니다!");
+      throw new MissmatchAuthor("본인의 게시물이 아닙니다!");
     }
   }
 }

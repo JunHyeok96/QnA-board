@@ -1,13 +1,18 @@
 package com.board.web.restcontroller;
 
 import com.board.config.Auth;
+import com.board.domain.post.PostRepository;
 import com.board.service.PostService;
 import com.board.web.dto.post.PostRequestDto;
 import com.board.web.dto.post.PostResponseDto;
 import com.board.web.dto.post.PostUpdateDto;
+import java.util.stream.Collectors;
+import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,10 +29,11 @@ import java.util.List;
 public class PostApiController {
 
   private final PostService postService;
+  private final PostRepository postRepository;
 
   @GetMapping("/post/list")
-  public List<PostResponseDto> postList() {
-    return postService.findAllQuestion();
+  public List<PostResponseDto> postList(final Pageable pageable) {
+    return postService.findAllQuestion(pageable);
   }
 
   @GetMapping("/post/{id}")
@@ -37,29 +43,8 @@ public class PostApiController {
 
   @Auth
   @GetMapping("/post/answer/{postId}")
-  public List<PostResponseDto> answerList(@PathVariable Long postId) {
-    return postService.findAnswer(postId);
-  }
-
-  @Auth
-  @GetMapping("/post/answer/my-answer")
-  public List<PostResponseDto> myAnswerList(HttpSession session, HttpServletResponse response) {
-    try {
-      return postService.findMyAnswer(session);
-    } catch (IllegalStateException e) {
-      response.setStatus(401);
-      return null;
-    }
-  }
-
-  @GetMapping("/post/answer/my-question")
-  public List<PostResponseDto> myQuestionList(HttpSession session, HttpServletResponse response) {
-    try {
-      return postService.findMyPosts(session);
-    } catch (IllegalStateException e) {
-      response.setStatus(401);
-      return null;
-    }
+  public List<PostResponseDto> answerList(@PathVariable Long postId, final Pageable pageable) {
+    return postService.findAnswer(postId, pageable);
   }
 
   @PostMapping("/post/")
@@ -71,21 +56,12 @@ public class PostApiController {
   @PutMapping("/post/{id}")
   public void update(@PathVariable Long id, @RequestBody PostUpdateDto postUpdateDto,
       HttpSession session, HttpServletResponse response) {
-    try {
-      postService.update(id, postUpdateDto, session);
-    } catch (IllegalStateException e) {
-      response.setStatus(401);
-    }
+    postService.update(id, postUpdateDto, session);
   }
 
   @Auth
   @DeleteMapping("/post/{id}")
   public void delete(@PathVariable Long id, HttpSession session, HttpServletResponse response) {
-    try {
-      postService.delete(id, session);
-    } catch (IllegalStateException e) {
-      response.setStatus(401);
-    }
+    postService.delete(id, session);
   }
-
 }

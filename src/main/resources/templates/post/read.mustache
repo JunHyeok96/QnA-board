@@ -8,7 +8,7 @@
         더보기
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
-        <a href="#" class="dropdown-item" id="btn-update">수정</a>
+        <a href="/post/update/{{post.id}}" class="dropdown-item" id="btn-update">수정</a>
         <a href="#" class="dropdown-item" id="btn-delete">삭제</a>
       </div>
     </div>
@@ -48,22 +48,6 @@
       $('#btn-delete').on('click', function () {
         _this.delete();
       });
-      $('#btn-update').on('click', function () {
-        _this.update();
-      })
-    },
-    update: function () {
-      var id = $('#id').val();
-      $.ajax({
-        type: 'GET',
-        url: '/post/update/' + id,
-        contentType: 'application/json; charset=utf-8',
-      }).done(function () {
-        window.location.href = '/post/update/' + id;
-      })
-      .fail(function (error) {
-        alert('본인의 게시물만 수정할 수 있습니다.')
-      });
     },
     delete: function () {
       var id = $('#id').val();
@@ -76,7 +60,9 @@
         alert('글이 삭제되었습니다.');
         window.location.href = '/';
       }).fail(function (error) {
-        alert('본인의 게시물만 삭제할 수 있습니다.')
+        if(error.status == 403){
+          alert('본인의 게시물만 삭제할 수 있습니다.');
+        }
       });
     }
   };

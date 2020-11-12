@@ -54,7 +54,7 @@ public class UserServiceTest {
 
   @Test
   @DisplayName("사용자 - 정보 수정")
-  public void updateUser() throws LoginException {
+  public void updateUser() {
     //given
     userService = new UserService(mockUserRepository);
     UserUpdateDto userUpdateDto = mock(UserUpdateDto.class);
@@ -75,7 +75,7 @@ public class UserServiceTest {
 
   @Test(expected = UserMismatchException.class)
   @DisplayName("사용자 - 타인의 정보 수정")
-  public void failUpdateUser() throws LoginException {
+  public void failUpdateUser() {
     //given
     userService = new UserService(mockUserRepository);
     UserUpdateDto userUpdateDto = mock(UserUpdateDto.class);

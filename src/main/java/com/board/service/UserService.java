@@ -9,7 +9,6 @@ import com.board.web.dto.user.UserRequestDto;
 import com.board.web.dto.user.UserResponseDto;
 import com.board.web.dto.user.UserUpdateDto;
 import java.util.stream.Collectors;
-import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +35,7 @@ public class UserService {
   }
 
   @Transactional
-  public Long update(String userId, UserUpdateDto dto, HttpSession session) throws LoginException {
+  public Long update(String userId, UserUpdateDto dto, HttpSession session) {
     User updateUser = userRepository.findByUserId(userId);
     if (updateUser == null) {
       throw new UserNotFoundException("해당 유저가 없습니다. id=" + userId);
