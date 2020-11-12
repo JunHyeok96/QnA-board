@@ -1,5 +1,6 @@
 package com.board.web.controller;
 
+import com.board.config.Auth;
 import com.board.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

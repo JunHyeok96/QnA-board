@@ -1,5 +1,6 @@
 package com.board.web.controller;
 
+import com.board.config.Auth;
 import com.board.domain.post.Post;
 import com.board.service.PostService;
 import com.board.web.HttpSessionUtils;
@@ -35,6 +36,7 @@ public class PostController {
     return "post/read";
   }
 
+  @Auth
   @GetMapping("/post/update/{id}")
   public String postUpdate(@PathVariable Long id, HttpSession session,
       Model model, HttpServletResponse response) throws Exception {

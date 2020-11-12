@@ -7,9 +7,12 @@ import static org.mockito.Mockito.when;
 
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
+import com.board.domain.user.exception.UserMismatchException;
+import com.board.domain.user.exception.UserNotFoundException;
 import com.board.web.HttpSessionUtils;
 import com.board.web.dto.user.UserRequestDto;
 import com.board.web.dto.user.UserUpdateDto;
+import javax.security.auth.login.LoginException;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -51,7 +54,7 @@ public class UserServiceTest {
 
   @Test
   @DisplayName("사용자 - 정보 수정")
-  public void updateUser() {
+  public void updateUser() throws LoginException {
     //given
     userService = new UserService(mockUserRepository);
     UserUpdateDto userUpdateDto = mock(UserUpdateDto.class);
@@ -70,9 +73,9 @@ public class UserServiceTest {
 
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test(expected = UserMismatchException.class)
   @DisplayName("사용자 - 타인의 정보 수정")
-  public void failUpdateUser() {
+  public void failUpdateUser() throws LoginException {
     //given
     userService = new UserService(mockUserRepository);
     UserUpdateDto userUpdateDto = mock(UserUpdateDto.class);
@@ -80,18 +83,6 @@ public class UserServiceTest {
     when(HttpSessionUtils.getUserFromSession(any())).thenReturn(mockUser);
     when(mockUserRepository.findByUserId(any())).thenReturn(mockUser);
     when(mockUser.matchUserId(any())).thenReturn(false);
-
-    //when
-    userService.update("", userUpdateDto, mockHttpSession);
-  }
-
-  @Test(expected = IllegalStateException.class)
-  @DisplayName("사용자 - 로그인없이 정보 수정 접근")
-  public void failUpdateUser2() {
-    //given
-    userService = new UserService(mockUserRepository);
-    UserUpdateDto userUpdateDto = mock(UserUpdateDto.class);
-    when(HttpSessionUtils.isLoginUser(any())).thenReturn(false);
 
     //when
     userService.update("", userUpdateDto, mockHttpSession);

@@ -41,21 +41,22 @@ public class User extends BaseTimeEntity {
     this.email = email;
   }
 
-  public User update(String password, String name, String email){
+  public User update(String password, String name, String email) {
     this.password = password;
     this.name = name;
     this.email = email;
     return this;
   }
 
-  public boolean matchPassword(String newPassword){
-    if (newPassword == null){
+  public boolean matchPassword(String newPassword) {
+    if (newPassword == null) {
       return false;
     }
     return newPassword.equals(password);
   }
-  public boolean matchUserId(String newUserId){
-    if (newUserId == null){
+
+  public boolean matchUserId(String newUserId) {
+    if (newUserId == null) {
       return false;
     }
     return newUserId.equals(userId);

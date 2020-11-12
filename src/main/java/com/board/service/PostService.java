@@ -50,13 +50,21 @@ public class PostService {
   }
 
   @Transactional(readOnly = true)
-  public List<PostResponseDto> findMyPosts(String userId) {
-    return null;
+  public List<PostResponseDto> findMyPosts(HttpSession session) {
+    String userId = HttpSessionUtils.getUserFromSession(session).getUserId();
+    return postRepository.findByUserIdAndPostType(userId, PostType.Q)
+        .stream()
+        .map(PostResponseDto::new)
+        .collect(Collectors.toList());
   }
 
   @Transactional(readOnly = true)
-  public List<PostResponseDto> findMyAnswer(String userId) {
-    return null;
+  public List<PostResponseDto> findMyAnswer(HttpSession session) {
+    String userId = HttpSessionUtils.getUserFromSession(session).getUserId();
+    return postRepository.findByUserIdAndPostType(userId, PostType.Q)
+        .stream()
+        .map(PostResponseDto::new)
+        .collect(Collectors.toList());
   }
 
   @Transactional

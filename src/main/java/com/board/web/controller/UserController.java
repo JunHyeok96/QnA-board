@@ -1,5 +1,6 @@
 package com.board.web.controller;
 
+import com.board.config.Auth;
 import com.board.domain.user.User;
 import com.board.service.UserService;
 import com.board.web.HttpSessionUtils;
@@ -41,7 +42,7 @@ public class UserController {
   }
 
   @PostMapping("/user/login")
-  public String login(@RequestBody UserLoginRequestDto requestDto , HttpSession session,
+  public String login(@RequestBody UserLoginRequestDto requestDto, HttpSession session,
       HttpServletResponse response) {
     if (userService.login(requestDto.getUserId(), requestDto.getPassword(), session)) {
       return "redirect:/";
@@ -51,6 +52,7 @@ public class UserController {
     }
   }
 
+  @Auth
   @GetMapping("/user/logout")
   public String logout(HttpSession session) {
     HttpSessionUtils.logout(session);
@@ -63,16 +65,11 @@ public class UserController {
     return "user/list";
   }
 
+  @Auth
   @GetMapping("/user/form/update")
   public String userForm(Model model, HttpSession session) {
-    if (!HttpSessionUtils.isLoginUser(session)) {
-      return "redirect:/user/login";
-    } else {
-      User user = HttpSessionUtils.getUserFromSession(session);
-      model.addAttribute("user", userService.findById(user.getId()));
-      return "user/updateForm";
-    }
+    User user = HttpSessionUtils.getUserFromSession(session);
+    model.addAttribute("user", userService.findById(user.getId()));
+    return "user/updateForm";
   }
-
-
 }

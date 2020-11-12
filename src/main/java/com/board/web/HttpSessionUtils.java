@@ -24,4 +24,8 @@ public class HttpSessionUtils {
     session.removeAttribute(HttpSessionUtils.USER_SESSION_KEY);
   }
 
+  public static void updateUser(User user, HttpSession session) {
+    session.setAttribute(USER_SESSION_KEY, user);
+  }
+
 }

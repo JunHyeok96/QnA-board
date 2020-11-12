@@ -1,5 +1,6 @@
 package com.board.web.restcontroller;
 
+import com.board.config.Auth;
 import com.board.service.PostService;
 import com.board.web.dto.post.PostRequestDto;
 import com.board.web.dto.post.PostResponseDto;
@@ -34,9 +35,31 @@ public class PostApiController {
     return postService.findById(id);
   }
 
+  @Auth
   @GetMapping("/post/answer/{postId}")
   public List<PostResponseDto> answerList(@PathVariable Long postId) {
     return postService.findAnswer(postId);
+  }
+
+  @Auth
+  @GetMapping("/post/answer/my-answer")
+  public List<PostResponseDto> myAnswerList(HttpSession session, HttpServletResponse response) {
+    try {
+      return postService.findMyAnswer(session);
+    } catch (IllegalStateException e) {
+      response.setStatus(401);
+      return null;
+    }
+  }
+
+  @GetMapping("/post/answer/my-question")
+  public List<PostResponseDto> myQuestionList(HttpSession session, HttpServletResponse response) {
+    try {
+      return postService.findMyPosts(session);
+    } catch (IllegalStateException e) {
+      response.setStatus(401);
+      return null;
+    }
   }
 
   @PostMapping("/post/")
@@ -44,6 +67,7 @@ public class PostApiController {
     postService.save(postRequestDto);
   }
 
+  @Auth
   @PutMapping("/post/{id}")
   public void update(@PathVariable Long id, @RequestBody PostUpdateDto postUpdateDto,
       HttpSession session, HttpServletResponse response) {
@@ -54,6 +78,7 @@ public class PostApiController {
     }
   }
 
+  @Auth
   @DeleteMapping("/post/{id}")
   public void delete(@PathVariable Long id, HttpSession session, HttpServletResponse response) {
     try {

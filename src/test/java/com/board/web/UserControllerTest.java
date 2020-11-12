@@ -124,7 +124,7 @@ public class UserControllerTest {
     this.mvc.perform(put(url).contentType(MediaType.APPLICATION_JSON)
         .content(new ObjectMapper().writeValueAsString(updateDto))
         .session(session))
-        .andExpect(status().isOk());
+        .andExpect(status().is3xxRedirection());
 
     //then
     User user = userRepository.findByUserId(saveId);
