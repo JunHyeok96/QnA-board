@@ -33,7 +33,11 @@ public class AuthLoginInterceptor extends HandlerInterceptorAdapter {
     }
 
     HttpSession session = request.getSession();
-    if (!HttpSessionUtils.isLoginUser(session)) {
+    if (!HttpSessionUtils.isLoginUser(session)){
+      if(request.getMethod().equals("PUT") || request.getMethod().equals("DELETE")){
+        response.setStatus(401);
+        return false;
+      }
       response.setStatus(303);
       response.setHeader(HttpHeaders.LOCATION, "/user/login");
       return false;
