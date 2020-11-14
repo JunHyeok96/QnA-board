@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
@@ -32,8 +33,8 @@ public class PostApiController {
   private final PostRepository postRepository;
 
   @GetMapping("/post/list")
-  public List<PostResponseDto> postList(final Pageable pageable) {
-    return postService.findAllQuestion(pageable);
+  public List<PostResponseDto> postList() {
+    return postService.findAllQuestion();
   }
 
   @GetMapping("/post/{id}")
@@ -55,7 +56,7 @@ public class PostApiController {
   @Auth
   @PutMapping("/post/{id}")
   public void update(@PathVariable Long id, @RequestBody PostUpdateDto postUpdateDto,
-      HttpSession session, HttpServletResponse response) {
+      HttpSession session) {
     postService.update(id, postUpdateDto, session);
   }
 

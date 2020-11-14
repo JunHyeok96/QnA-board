@@ -9,6 +9,9 @@ import com.board.web.HttpSessionUtils;
 import com.board.web.dto.post.PostRequestDto;
 import com.board.web.dto.post.PostResponseDto;
 import com.board.web.dto.post.PostUpdateDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
@@ -26,12 +29,18 @@ public class PostService {
   private final PostRepository postRepository;
 
   @Transactional(readOnly = true)
-  public List<PostResponseDto> findAllQuestion(Pageable pageable) {
-    return postRepository.findByPostType(PostType.Q, pageable)
+  public List<PostResponseDto> findAllQuestion() {
+    return postRepository.findByPostType(PostType.Q)
         .stream()
         .map(PostResponseDto::new)
         .collect(Collectors.toList());
   }
+
+  @Transactional(readOnly = true)
+  public Page<Post> findAllQuestion(Pageable pageable) {
+    return postRepository.findByPostType(PostType.Q, pageable);
+  }
+
 
   @Transactional(readOnly = true)
   public PostResponseDto findById(Long id) {
