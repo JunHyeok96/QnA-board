@@ -26,7 +26,7 @@ public class IndexController {
   private final int PAGE_SIZE = 10;
 
   @GetMapping("/")
-  public String index(Model model) {
+  public String index(Model model, HttpSession session) {
     Page<Post> posts = postService
         .findAllQuestion(PageRequest.of(0, CONTENT_SIZE, Sort.by("createDate").descending()));
     int maxPage = (int) posts.getTotalPages();

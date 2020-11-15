@@ -12,4 +12,5 @@ public @interface Auth {
   public enum Role {GUEST, USER, ADMIN}
 
   public Role role() default Role.GUEST;
+
 }

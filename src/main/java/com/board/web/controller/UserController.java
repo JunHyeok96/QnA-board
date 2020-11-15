@@ -1,6 +1,7 @@
 package com.board.web.controller;
 
 import com.board.config.Auth;
+import com.board.config.SessionUser;
 import com.board.domain.user.User;
 import com.board.service.UserService;
 import com.board.web.HttpSessionUtils;
@@ -68,8 +69,8 @@ public class UserController {
   @Auth
   @GetMapping("/user/form/update")
   public String userForm(Model model, HttpSession session) {
-    User user = HttpSessionUtils.getUserFromSession(session);
-    model.addAttribute("user", userService.findById(user.getId()));
+    SessionUser user = HttpSessionUtils.getUserFromSession(session);
+    model.addAttribute("user", userService.findByUserId(user.getUserId()));
     return "user/updateForm";
   }
 }

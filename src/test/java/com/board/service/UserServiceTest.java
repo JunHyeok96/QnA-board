@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
+import com.board.config.SessionUser;
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
 import com.board.domain.user.exception.UserMismatchException;
@@ -56,12 +57,14 @@ public class UserServiceTest {
   @DisplayName("사용자 - 정보 수정")
   public void updateUser() {
     //given
+    SessionUser mockSessionedUser = mock(SessionUser.class);
     userService = new UserService(mockUserRepository);
+
     UserUpdateDto userUpdateDto = mock(UserUpdateDto.class);
     when(HttpSessionUtils.isLoginUser(any())).thenReturn(true);
-    when(HttpSessionUtils.getUserFromSession(any())).thenReturn(mockUser);
+    when(HttpSessionUtils.getUserFromSession(any())).thenReturn(mockSessionedUser);
     when(mockUserRepository.findByUserId(any())).thenReturn(mockUser);
-    when(mockUser.matchUserId(any())).thenReturn(true);
+    when(mockSessionedUser.matchUserId(any())).thenReturn(true);
     when(mockUser.update(any(), any(), any())).thenReturn(mockUser);
 
     //when
@@ -78,11 +81,13 @@ public class UserServiceTest {
   public void failUpdateUser() {
     //given
     userService = new UserService(mockUserRepository);
+    SessionUser mockSessionedUser = mock(SessionUser.class);
+
     UserUpdateDto userUpdateDto = mock(UserUpdateDto.class);
     when(HttpSessionUtils.isLoginUser(any())).thenReturn(true);
-    when(HttpSessionUtils.getUserFromSession(any())).thenReturn(mockUser);
+    when(HttpSessionUtils.getUserFromSession(any())).thenReturn(mockSessionedUser);
     when(mockUserRepository.findByUserId(any())).thenReturn(mockUser);
-    when(mockUser.matchUserId(any())).thenReturn(false);
+    when(mockSessionedUser.matchUserId(any())).thenReturn(false);
 
     //when
     userService.update("", userUpdateDto, mockHttpSession);
@@ -137,6 +142,7 @@ public class UserServiceTest {
   public void failLoginByPassword() {
     //given
     userService = new UserService(mockUserRepository);
+
     when(HttpSessionUtils.isLoginUser(any())).thenReturn(false);
     when(mockUserRepository.findByUserId(any())).thenReturn(mockUser);
     when(mockUser.matchPassword(any())).thenReturn(false);

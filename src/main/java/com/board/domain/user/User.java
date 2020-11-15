@@ -1,5 +1,6 @@
 package com.board.domain.user;
 
+import com.board.config.SessionUser;
 import com.board.domain.BaseTimeEntity;
 import com.board.web.HttpSessionUtils;
 import javax.persistence.Column;
@@ -62,5 +63,8 @@ public class User extends BaseTimeEntity {
     return newUserId.equals(userId);
   }
 
+  public SessionUser makeSessionUser(){
+    return new SessionUser(userId, email, name, password);
+  }
 
 }

@@ -1,5 +1,6 @@
 package com.board.service;
 
+import com.board.config.SessionUser;
 import com.board.domain.post.Post;
 import com.board.domain.post.PostRepository;
 import com.board.domain.post.PostType;
@@ -88,7 +89,7 @@ public class PostService {
   public Long update(Long id, PostUpdateDto postUpdateDto, HttpSession session) {
     Post post = postRepository.findById(id)
         .orElseThrow(() -> new PostNotFoundException("존재하지 않는 게시물"));
-    User user = post.matchAuthor(session);
+    SessionUser user = post.matchAuthor(session);
     post.update(postUpdateDto.getTitle(), postUpdateDto.getContent());
     log.info(user.getUserId() + "님의 id : " + id + " 게시글이 업데이트되었습니다.");
     return id;
@@ -98,7 +99,7 @@ public class PostService {
   public void delete(Long id, HttpSession session) {
     Post post = postRepository.findById(id)
         .orElseThrow(() -> new PostNotFoundException("존재하지 않는 게시물"));
-    User user = post.matchAuthor(session);
+    SessionUser user = post.matchAuthor(session);
     postRepository.deleteByPostId(id);
     postRepository.deleteById(id);
     log.info(user.getUserId() + "님의 id : " + id + " 게시글이 삭제되었습니다.");

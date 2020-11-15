@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
+import com.board.config.SessionUser;
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
 import com.board.web.dto.user.UserLoginRequestDto;
@@ -109,8 +110,15 @@ public class UserControllerTest {
     String updateName = "제이그래머";
     String updatePassword = "wpdlrmfoaj";
 
+    SessionUser sessionUser = SessionUser.builder()
+        .name(name)
+        .userId(id)
+        .password(password)
+        .email(email)
+        .build();
+
     String saveId = userRepository.save(userRequestDto.toEntity()).getUserId();
-    session.setAttribute("sessionedUser", userRepository.findByUserId(saveId));
+    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, sessionUser);
 
     UserUpdateDto updateDto = UserUpdateDto.builder()
         .name(updateName)
@@ -148,9 +156,17 @@ public class UserControllerTest {
         .password(password)
         .email(email)
         .build();
+
+    SessionUser sessionUser = SessionUser.builder()
+        .userId(id + "_2")
+        .name(name)
+        .password(password)
+        .email(email)
+        .build();
+
     userRepository.save(newUser.toEntity()).getId();
 
-    session.setAttribute("sessionedUser", newUser.toEntity());
+    session.setAttribute("sessionedUser", sessionUser);
 
     UserUpdateDto updateDto = UserUpdateDto.builder()
         .name(updateName)
@@ -175,7 +191,6 @@ public class UserControllerTest {
   @Test
   public void 로그인성공() throws Exception {
     userRepository.save(userRequestDto.toEntity()).getId();
-
 
     String url = "http://localhost:" + port + "/user/login";
 

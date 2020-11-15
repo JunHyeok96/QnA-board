@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
+import com.board.config.SessionUser;
 import com.board.domain.post.Post;
 import com.board.domain.post.PostRepository;
 import com.board.domain.post.exception.MissmatchAuthor;
@@ -54,7 +55,7 @@ public class PostServiceTest {
     //given
     postService = new PostService(postRepository);
     Optional<Post> mockOptional = mock(Optional.class);
-    User mockUser = mock(User.class);
+    SessionUser mockUser = mock(SessionUser.class);
     PostUpdateDto mockPostUpdateDto = mock(PostUpdateDto.class);
     when(postRepository.findById(any())).thenReturn(mockOptional);
     when(mockOptional.orElseThrow(any())).thenReturn(mockPost);
@@ -91,7 +92,7 @@ public class PostServiceTest {
     //given
     postService = new PostService(postRepository);
     Optional<Post> mockOptional = mock(Optional.class);
-    User mockUser = mock(User.class);
+    SessionUser mockUser = mock(SessionUser.class);
     when(postRepository.findById(any())).thenReturn(mockOptional);
     when(mockOptional.orElseThrow(any())).thenReturn(mockPost);
     when(mockPost.matchAuthor(any())).thenReturn(mockUser);

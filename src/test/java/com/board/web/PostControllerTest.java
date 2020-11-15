@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.board.config.SessionUser;
 import com.board.domain.post.Post;
 import com.board.domain.post.PostRepository;
 import com.board.domain.user.User;
@@ -20,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -123,6 +125,13 @@ public class PostControllerTest {
     String updateContent = "updateContent";
     String updateTitle = "updateTitle";
 
+    SessionUser sessionUser = SessionUser.builder()
+        .userId(userId)
+        .name("a")
+        .password("1234")
+        .email("aa@22.com")
+        .build();
+
     PostUpdateDto postUpdateDto = PostUpdateDto.builder()
         .title(updateTitle)
         .content(updateContent)
@@ -130,7 +139,7 @@ public class PostControllerTest {
 
     Post post = postRepository.save(postRequestDto.toEntity());
 
-    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user);
+    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, sessionUser);
 
     String url = "http://localhost:" + port + "/post/" + post.getId();
 
@@ -169,7 +178,14 @@ public class PostControllerTest {
   @Test
   public void 자신의게시글삭제() throws Exception {
     Post post = postRepository.save(postRequestDto.toEntity());
-    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user);
+
+    SessionUser sessionUser = SessionUser.builder()
+        .userId(userId)
+        .name("a")
+        .password("1234")
+        .email("aa@22.com")
+        .build();
+    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, sessionUser);
 
     String url = "http://localhost:" + port + "/post/" + post.getId().toString();
 
@@ -184,12 +200,12 @@ public class PostControllerTest {
 
   @Test
   public void 타인의게시글삭제() throws Exception {
-    User newUser = UserRequestDto.builder()
+    SessionUser newUser = SessionUser.builder()
         .userId(userId + "_1")
         .name("a")
         .password("1234")
         .email("aa@22.com")
-        .build().toEntity();
+        .build();
 
     Post post = postRepository.save(postRequestDto.toEntity());
     session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, newUser);
@@ -207,12 +223,12 @@ public class PostControllerTest {
 
   @Test
   public void 타인의게시글수정() throws Exception {
-    User newUser = UserRequestDto.builder()
+    SessionUser newUser = SessionUser.builder()
         .userId(userId + "_1")
         .name("a")
         .password("1234")
         .email("aa@22.com")
-        .build().toEntity();
+        .build();
 
     PostUpdateDto postUpdateDto = PostUpdateDto.builder()
         .title("abcd")

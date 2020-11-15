@@ -1,5 +1,6 @@
 package com.board.domain.post;
 
+import com.board.config.SessionUser;
 import com.board.domain.BaseTimeEntity;
 import com.board.domain.post.exception.MissmatchAuthor;
 import com.board.domain.user.User;
@@ -57,11 +58,11 @@ public class Post extends BaseTimeEntity {
     return this;
   }
 
-  public User matchAuthor(HttpSession session) {
+  public SessionUser matchAuthor(HttpSession session) {
     if (!HttpSessionUtils.isLoginUser(session)) {
       throw new LoginException("로그인되지 않았습니다.");
     }
-    User user = HttpSessionUtils.getUserFromSession(session);
+    SessionUser user = HttpSessionUtils.getUserFromSession(session);
     if (user.matchUserId(this.userId)) {
       return user;
     } else {

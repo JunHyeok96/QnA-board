@@ -24,6 +24,8 @@ repositories {
 }
 
 dependencies {
+    compile('org.springframework.boot:spring-boot-starter-data-redis')
+    compile('org.springframework.session:spring-session-data-redis')
     compile('org.springframework.boot:spring-boot-starter-mustache')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.projectlombok:lombok')

@@ -1,5 +1,6 @@
 package com.board.service;
 
+import com.board.config.SessionUser;
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
 import com.board.domain.user.exception.UserMismatchException;
@@ -40,7 +41,7 @@ public class UserService {
     if (updateUser == null) {
       throw new UserNotFoundException("해당 유저가 없습니다. id=" + userId);
     }
-    User user = HttpSessionUtils.getUserFromSession(session);
+    SessionUser user = HttpSessionUtils.getUserFromSession(session);
     if (!user.matchUserId(userId)) {
       throw new UserMismatchException("수정 권한이 없습니다.");
     }
@@ -64,6 +65,12 @@ public class UserService {
   }
 
   @Transactional(readOnly = true)
+  public UserResponseDto findByUserId(String userId) {
+    User entity = userRepository.findByUserId(userId);
+    return new UserResponseDto(entity);
+  }
+
+  @Transactional(readOnly = true)
   public boolean login(String userId, String password, HttpSession session) {
     if (HttpSessionUtils.isLoginUser(session)) {
       return true;
@@ -76,7 +83,7 @@ public class UserService {
       log.info("id : " + userId + "님이 다른 비밀번호로 접근했습니다.");
       return false;
     } else {
-      session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user);
+      session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user.makeSessionUser());
       log.info("id : " + userId + "님이 로그인 하셨습니다.");
       return true;
     }
