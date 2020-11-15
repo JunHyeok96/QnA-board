@@ -2,6 +2,7 @@ package com.board.web;
 
 import com.board.domain.post.exception.MissmatchAuthor;
 import com.board.domain.user.exception.AlreadyExistUser;
+import com.board.domain.user.exception.LoginException;
 import com.board.domain.user.exception.UserMismatchException;
 import com.board.domain.user.exception.UserNotFoundException;
 import java.io.IOException;
@@ -17,6 +18,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 @Slf4j
 public class GlobalControllerAdvice {
+
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  @ExceptionHandler(value = {LoginException.class})
+  public ResponseEntity handleLoginException(HttpServletRequest request,
+      Exception e) {
+    log.error(String.valueOf(request.getMethod()));
+    log.error(String.valueOf(request.getRequestURL()));
+    return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+  }
 
   @ResponseStatus(HttpStatus.FORBIDDEN)
   @ExceptionHandler(value = {UserMismatchException.class, MissmatchAuthor.class})

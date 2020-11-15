@@ -4,6 +4,7 @@ import com.board.config.SessionUser;
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
 import com.board.domain.user.exception.AlreadyExistUser;
+import com.board.domain.user.exception.LoginException;
 import com.board.domain.user.exception.UserMismatchException;
 import com.board.domain.user.exception.UserNotFoundException;
 import com.board.web.HttpSessionUtils;
@@ -79,10 +80,10 @@ public class UserService {
     User user = userRepository.findByUserId(userId);
     if (user == null) {
       log.info("id : " + userId + "는 존재하지 않는 유저입니다.");
-      return false;
+      throw new LoginException("로그인 정보를 확인해주세요");
     } else if (!user.matchPassword(password)) {
       log.info("id : " + userId + "님이 다른 비밀번호로 접근했습니다.");
-      return false;
+      throw new LoginException("로그인 정보를 확인해주세요");
     } else {
       session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user.makeSessionUser());
       log.info("id : " + userId + "님이 로그인 하셨습니다.");

@@ -210,7 +210,7 @@ public class UserControllerTest {
     this.mvc.perform(MockMvcRequestBuilders.post(url)
         .contentType(MediaType.APPLICATION_JSON)
         .content(new ObjectMapper().writeValueAsString(new UserLoginRequestDto(id, " "))))
-        .andExpect(status().isUnauthorized());
+        .andExpect(status().isForbidden());
   }
 
   @Test
@@ -223,7 +223,7 @@ public class UserControllerTest {
     this.mvc.perform(MockMvcRequestBuilders.post(url)
         .contentType(MediaType.APPLICATION_JSON)
         .content(new ObjectMapper().writeValueAsString(new UserLoginRequestDto(" ", password))))
-        .andExpect(status().isUnauthorized());
+        .andExpect(status().isForbidden());
   }
 
   @Test

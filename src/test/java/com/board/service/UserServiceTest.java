@@ -9,12 +9,12 @@ import com.board.config.SessionUser;
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
 import com.board.domain.user.exception.AlreadyExistUser;
+import com.board.domain.user.exception.LoginException;
 import com.board.domain.user.exception.UserMismatchException;
 import com.board.domain.user.exception.UserNotFoundException;
 import com.board.web.HttpSessionUtils;
 import com.board.web.dto.user.UserRequestDto;
 import com.board.web.dto.user.UserUpdateDto;
-import javax.security.auth.login.LoginException;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -138,7 +138,7 @@ public class UserServiceTest {
     assertTrue(isLogin);
   }
 
-  @Test
+  @Test(expected = LoginException.class)
   @DisplayName("로그인 - 비밀번호 오류")
   public void failLoginByPassword() {
     //given
@@ -151,11 +151,9 @@ public class UserServiceTest {
     //when
     boolean isLogin = userService.login("", "", mockHttpSession);
 
-    //then
-    assertFalse(isLogin);
   }
 
-  @Test
+  @Test(expected = LoginException.class)
   @DisplayName("로그인 - 존재하지 않는 유저")
   public void failLoginByNotExist() {
     //given
@@ -166,8 +164,6 @@ public class UserServiceTest {
     //when
     boolean isLogin = userService.login("", "", mockHttpSession);
 
-    //then
-    assertFalse(isLogin);
   }
 
   @Test
