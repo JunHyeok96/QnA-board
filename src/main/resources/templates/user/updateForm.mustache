@@ -47,7 +47,7 @@
         alert('정보가 수정되었습니다.');
         window.location.href = '/';
       }).fail(function (error) {
-        alert(JSON.stringify(error));
+        alert(error.responseText);
       });
     },
   };

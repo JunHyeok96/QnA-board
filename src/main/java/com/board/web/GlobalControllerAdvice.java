@@ -1,6 +1,7 @@
 package com.board.web;
 
 import com.board.domain.post.exception.MissmatchAuthor;
+import com.board.domain.user.exception.AlreadyExistUser;
 import com.board.domain.user.exception.UserMismatchException;
 import com.board.domain.user.exception.UserNotFoundException;
 import java.io.IOException;
@@ -35,5 +36,13 @@ public class GlobalControllerAdvice {
     return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
   }
 
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(value = AlreadyExistUser.class)
+  public ResponseEntity handleAlreadyExistUser(HttpServletRequest request,
+      AlreadyExistUser e) {
+    log.error(String.valueOf(request.getMethod()));
+    log.error(String.valueOf(request.getRequestURL()));
+    return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+  }
 
 }

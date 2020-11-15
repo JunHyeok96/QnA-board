@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.board.config.SessionUser;
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
+import com.board.domain.user.exception.AlreadyExistUser;
 import com.board.domain.user.exception.UserMismatchException;
 import com.board.domain.user.exception.UserNotFoundException;
 import com.board.web.HttpSessionUtils;
@@ -111,7 +112,7 @@ public class UserServiceTest {
     assertNotNull(id);
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test(expected = AlreadyExistUser.class)
   @DisplayName("사용자 - 이미 등록된 아이디")
   public void failSaveUser() {
     //given

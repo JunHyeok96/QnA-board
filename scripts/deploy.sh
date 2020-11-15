@@ -33,4 +33,6 @@ chmod +x $JAR_NAME
 
 echo "> $JAR_NAME 실행"
 
-nohup java -jar $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &
+cd /home/ubuntu/deploy/
+
+nohup java -jar -Dspring.config.location:/home/ubuntu/deploy/application-real.properties $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &

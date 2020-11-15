@@ -78,11 +78,9 @@
         alert('글이 삭제되었습니다.');
         window.location.href = '/';
       }).fail(function (error) {
+        alert(error.responseText);
         if (error.status == 401) {
           window.location.href = '/user/login';
-        }
-        if (error.status == 403) {
-          alert('본인의 게시물만 삭제할 수 있습니다.');
         }
       })
     }

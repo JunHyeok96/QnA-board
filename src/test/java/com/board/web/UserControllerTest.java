@@ -77,13 +77,12 @@ public class UserControllerTest {
 
     //when
     this.mvc.perform(MockMvcRequestBuilders.post(url)
-        .param("name", name)
-        .param("userId", id)
-        .param("email", email)
-        .param("password", password)).andExpect(status().is3xxRedirection());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(new ObjectMapper().writeValueAsString(userRequestDto)))
+        .andExpect(status().is3xxRedirection());
 
     List<User> userAll = userRepository.findAll();
-    User user = userAll.get(0);
+    User user = userAll.get(userAll.size()-1);
 
     //then
     assertThat(user.getName()).isEqualTo(name);

@@ -32,7 +32,7 @@ public class UserController {
   }
 
   @PostMapping("/user/create")
-  public String create(UserRequestDto user) {
+  public String create(@RequestBody UserRequestDto user) {
     userService.save(user);
     return "redirect:/";
   }

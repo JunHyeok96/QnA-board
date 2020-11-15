@@ -54,7 +54,7 @@
           window.location.href = '/post/read/' + data.postId;
         }
       }).fail(function (error) {
-        alert(JSON.stringify(error));
+        alert(error.responseText);
       });
     },
   }

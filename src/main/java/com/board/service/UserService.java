@@ -3,6 +3,7 @@ package com.board.service;
 import com.board.config.SessionUser;
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
+import com.board.domain.user.exception.AlreadyExistUser;
 import com.board.domain.user.exception.UserMismatchException;
 import com.board.domain.user.exception.UserNotFoundException;
 import com.board.web.HttpSessionUtils;
@@ -31,7 +32,7 @@ public class UserService {
       Long id = userRepository.save(dto.toEntity()).getId();
       return id;
     } else {
-      throw new IllegalStateException("이미 등록된 유저입니다.");
+      throw new AlreadyExistUser("이미 등록된 유저입니다.");
     }
   }
 
