@@ -1,7 +1,8 @@
 from bs4 import BeautifulSoup
+import time
 import requests
-import urllib.request
 from datetime import datetime
+from pytz import timezone
 
 kst = datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d')
 
@@ -64,6 +65,5 @@ def crawling():
             except:
                 answer_dict["create_date"] = datetime.strptime(answer.find("span", "timeago").get("title"), '%Y-%m-%dT%H:%M')
             answers.append(answer_dict)
-        print(answers)
         data.append([question, answers])
     return data

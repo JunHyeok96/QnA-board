@@ -1,20 +1,25 @@
 {{>layout/header}}
 <div class="card text-center">
   <div class="card-header">
-    <h5>{{post.title}}</h5>
+    <div class="mb-1">
+      <h5>{{{post.title}}}</h5>
+    </div>
     <div class="dropdown mr-1" style="float: right;">
-      <button type="button" class="btn btn-secondary dropdown-toggle" id="dropdownMenuOffset"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="10,20">
-        더보기
-      </button>
-      <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
-        <a href="#" class="dropdown-item" id="btn-update">수정</a>
-        <a href="#" class="dropdown-item" id="btn-delete">삭제</a>
-      </div>
+      {{#updateButton}}
+        <button type="button" class="btn btn-secondary dropdown-toggle" id="dropdownMenuOffset"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                data-offset="10,20">
+          더보기
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
+          <a href="#" class="dropdown-item" id="btn-update">수정</a>
+          <a href="#" class="dropdown-item" id="btn-delete">삭제</a>
+        </div>
+      {{/updateButton}}
     </div>
   </div>
   <div class="card-body" style="text-align:left">
-    <pre><p class="card-text">{{post.content}}</p></pre>
+    <pre><p class="card-text">{{{post.content}}}</p></pre>
   </div>
 
   <div class="card-footer text-muted" style="text-align: left">
@@ -28,10 +33,9 @@
   {{#answer}}
     <div class="list-group-item list-group-item-action">
       <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">{{title}}</h5>
         <small>{{createDate}}</small>
       </div>
-      <p class="mb-1">{{content}}</p>
+      <p class="mb-1">{{{content}}}</p>
       <small>user : {{userId}}</small>
     </div>
   {{/answer}}

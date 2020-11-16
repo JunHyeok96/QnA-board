@@ -62,21 +62,15 @@ public class PostService {
   }
 
   @Transactional(readOnly = true)
-  public List<PostResponseDto> findMyPosts(HttpSession session, Pageable pageable) {
+  public Page<Post> findMyPosts(HttpSession session, Pageable pageable) {
     String userId = HttpSessionUtils.getUserFromSession(session).getUserId();
-    return postRepository.findByUserIdAndPostType(userId, PostType.Q, pageable)
-        .stream()
-        .map(PostResponseDto::new)
-        .collect(Collectors.toList());
+    return postRepository.findByUserIdAndPostType(userId, PostType.Q, pageable);
   }
 
   @Transactional(readOnly = true)
-  public List<PostResponseDto> findMyAnswer(HttpSession session, Pageable pageable) {
+  public Page<Post> findMyAnswer(HttpSession session, Pageable pageable) {
     String userId = HttpSessionUtils.getUserFromSession(session).getUserId();
-    return postRepository.findByUserIdAndPostType(userId, PostType.A, pageable)
-        .stream()
-        .map(PostResponseDto::new)
-        .collect(Collectors.toList());
+    return postRepository.findByUserIdAndPostType(userId, PostType.A, pageable);
   }
 
   @Transactional

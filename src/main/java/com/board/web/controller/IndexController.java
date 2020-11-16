@@ -45,7 +45,7 @@ public class IndexController {
   public String paging(Model model, @RequestParam("no") int page) {
     Page<Post> posts = postService.findAllQuestion(
         PageRequest.of(page - 1, CONTENT_SIZE, Sort.by("createDate").descending()));
-    if(posts.getContent().size() == 0){
+    if (posts.getContent().size() == 0) {
       return "/";
     }
     int maxPage = (int) posts.getTotalPages();
@@ -57,25 +57,54 @@ public class IndexController {
     if (page > PAGE_SIZE) {
       model.addAttribute("previous", previousPage);
     }
-    if (!(page == maxPage) &&maxPage > PAGE_SIZE && nextPage <= maxPage) {
+    if (!(page == maxPage) && maxPage > PAGE_SIZE && nextPage <= maxPage) {
       model.addAttribute("next", nextPage);
     }
+    return "index";
+  }
+
+  public String pagingMyAnswerList(HttpSession session, Model model) {
+    //TODO
+    return "index";
+  }
+
+  public String pagingQuestionList(HttpSession session, Model model) {
+    //TODO
     return "index";
   }
 
 
   @Auth
   @GetMapping("/post/answer/my-answer")
-  public String myAnswerList(HttpSession session, Pageable pageable, Model model) {
-    model.addAttribute("posts", postService.findMyAnswer(session, pageable));
+  public String myAnswerList(HttpSession session, Model model) {
+    Page<Post> posts = postService
+        .findMyAnswer(session, PageRequest.of(0, CONTENT_SIZE, Sort.by("createDate").descending()));
+    int maxPage = (int) posts.getTotalPages();
+    model.addAttribute("posts", posts.getContent());
+    model.addAttribute("currentPage", 1);
+    model.addAttribute("page", PageUtils.getPageList(maxPage, 1, PAGE_SIZE));
+    int nextPage = PageUtils.nextPage(maxPage, 1, PAGE_SIZE);
+    if (maxPage > PAGE_SIZE) {
+      model.addAttribute("next", nextPage);
+    }
     return "index";
   }
 
   @Auth
   @GetMapping("/post/answer/my-question")
-  public String myQuestionList(HttpSession session, Pageable pageable, Model model) {
-    model.addAttribute("posts", postService.findMyPosts(session, pageable));
+  public String myQuestionList(HttpSession session, Model model) {
+    Page<Post> posts = postService
+        .findMyPosts(session, PageRequest.of(0, CONTENT_SIZE, Sort.by("createDate").descending()));
+    int maxPage = (int) posts.getTotalPages();
+    model.addAttribute("posts", posts.getContent());
+    model.addAttribute("currentPage", 1);
+    model.addAttribute("page", PageUtils.getPageList(maxPage, 1, PAGE_SIZE));
+    int nextPage = PageUtils.nextPage(maxPage, 1, PAGE_SIZE);
+    if (maxPage > PAGE_SIZE) {
+      model.addAttribute("next", nextPage);
+    }
     return "index";
   }
+
 
 }

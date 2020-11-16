@@ -5,21 +5,23 @@
 </head>
 <body>
 {{>layout/header}}
-<div class="list-group" style="height: 700px; border: 1px solid rgba(0,0,0,.125)">
+<div class="list-group" style="height: 750px; border: 1px solid rgba(0,0,0,.125)">
   {{#posts}}
     <a href="/post/read/{{id}}" class="list-group-item list-group-item-action"
-       style="max-height: 150px">
+       style="height: 150px">
       <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">{{title}}</h5>
+        <div class="mb-1">
+          <h5>{{{title}}}</h5>
+        </div>
         <small>{{createDate}}</small>
       </div>
-      <pre><p class="content-preview">{{content}}</p></pre>
+      <pre><p class="content-preview"></p></pre>
       <small>{{userId}}</small>
     </a>
   {{/posts}}
 </div>
 <div style="text-align: center">
-  <nav aria-label="Page navigation example" >
+  <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
       {{^previous}}
         <li id="previousPage" class="page-item disabled">
@@ -36,7 +38,7 @@
         </li>
       {{/previous}}
       {{^page}}
-        <li class="page-item disabled" ><a class="page-link" href="#">1</a></li>
+        <li class="page-item disabled"><a class="page-link" href="#">1</a></li>
       {{/page}}
       {{#page}}
         <li class="page-item" id="page_{{.}}"><a class="page-link" href="/page?no={{.}}">{{.}}</a>
@@ -64,4 +66,5 @@
 <script>
   var currentPage = document.getElementById("page_{{currentPage}}");
   currentPage.className = "page-item disabled";
+  var title = document.getElementsByClassName("panel-title");
 </script>
