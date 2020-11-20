@@ -11,6 +11,7 @@ import com.board.domain.user.UserRepository;
 import com.board.web.HttpSessionUtils;
 import com.board.web.dto.Answer.AnswerRequsetDto;
 import com.board.web.dto.Answer.AnswerResponseDto;
+import com.board.web.dto.question.QuestionUpdateDto;
 import com.board.web.dto.user.UserResponseDto;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,6 +38,7 @@ public class AnswerService {
     Answer answer = answerRequsetDto
         .toEntity(question, user);
     Long id = answerRepository.save(answer).getId();
+    question.update(new QuestionUpdateDto(question.getTitle(), question.getContent(), answer));
     return id;
   }
 

@@ -1,12 +1,12 @@
 package com.board.web.dto.question;
 
+import com.board.domain.answer.Answer;
 import com.board.domain.question.Question;
-import com.board.web.dto.user.UserResponseDto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -19,7 +19,7 @@ public class QuestionResponseDto implements Serializable {
   private String content;
   private LocalDateTime createDate;
   private LocalDateTime modifiedDate;
-
+  private int answerCount;
   @Builder
   public QuestionResponseDto(Question entry) {
     this.id = entry.getId();
@@ -28,6 +28,8 @@ public class QuestionResponseDto implements Serializable {
     this.content = entry.getContent();
     this.createDate = entry.getCreateDate();
     this.modifiedDate = entry.getModifiedDate();
+    this.answerCount = entry.getAnswer().size();
+
   }
 
 }

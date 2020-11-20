@@ -16,11 +16,33 @@
 {{>layout/footer}}
 
 <script>
+  var click = true;
   var main = {
     init: function () {
       var _this = this;
       $('#btn-save').on('click', function () {
-        _this.save();
+        if (click) {
+          var title = $('#title').val()
+          var content = $('#content').val()
+          if(title.trim() === "" || title === null){
+            alert("제목을 입력하세요!")
+            return;
+          }
+          if(content.trim() === "" || content === null){
+            alert("내용을 입력하세요!")
+            return;
+          }
+          _this.save();
+          click = !click;
+
+          // 타이밍 추가
+          setTimeout(function () {
+            click = true;
+          }, 2000)
+
+        } else {
+          alert("처리중 입니다!");
+        }
       });
     },
     save: function () {

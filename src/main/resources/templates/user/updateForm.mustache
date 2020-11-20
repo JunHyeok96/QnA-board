@@ -23,11 +23,41 @@
 {{>layout/footer}}
 
 <script>
+  var click = true;
+
   var main = {
     init: function () {
       var _this = this;
       $('#btn-update').on('click', function () {
-        _this.update();
+        if (click) {
+          var userId = $('#userId').val()
+          var password = $('#password').val()
+          var name = $('#name').val()
+          var email = $('#email').val()
+          if(userId.trim() === "" || userId === null){
+            alert("아이디를 입력하세요!")
+            return;
+          }if(password.trim() === "" || password === null){
+            alert("비밀번호를 입력하세요!")
+            return;
+          }if(name.trim() === "" || name === null){
+            alert("이름을 입력하세요!")
+            return;
+          }
+          if(email.trim() === "" || email === null){
+            alert("이메일을 입력하세요!")
+            return;
+          _this.update();
+          click = !click;
+
+          // 타이밍 추가
+          setTimeout(function () {
+            click = true;
+          }, 2000)
+
+        } else {
+          alert("처리중 입니다!");
+        }
       })
     },
     update: function () {

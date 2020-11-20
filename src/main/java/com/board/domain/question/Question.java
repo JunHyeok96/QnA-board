@@ -4,6 +4,8 @@ import com.board.domain.BaseTimeEntity;
 import com.board.domain.answer.Answer;
 import com.board.domain.user.User;
 import com.board.web.dto.question.QuestionUpdateDto;
+import java.util.ArrayList;
+import java.util.HashSet;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
@@ -19,6 +21,7 @@ import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -40,6 +43,9 @@ public class Question extends BaseTimeEntity {
   @JoinColumn(foreignKey = @ForeignKey(name = "fk_post_user", value = ConstraintMode.NO_CONSTRAINT))
   private User user;
 
+  @OneToMany(fetch = FetchType.LAZY)
+  private Set<Answer> answer;
+
   @Builder
   public Question(String title, String content, User user) {
     this.title = title;
@@ -50,11 +56,15 @@ public class Question extends BaseTimeEntity {
   public Question update(QuestionUpdateDto dto) {
     this.title = dto.getTitle();
     this.content = dto.getContent();
+    if (this.answer == null) {
+      this.answer = new HashSet<>();
+    }
+    this.answer.add(dto.getAnswer());
     return this;
   }
 
   public boolean matchAuthor(String userId) {
-    if (this.user==null || userId.isEmpty()) {
+    if (this.user == null || userId.isEmpty()) {
       return false;
     }
     if (userId.equals(this.user.getUserId())) {

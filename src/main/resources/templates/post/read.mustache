@@ -21,14 +21,15 @@
   <div class="card-body" style="text-align:left">
     <pre><p class="card-text">{{{question.content}}}</p></pre>
   </div>
-
-  <div class="card-footer text-muted" style="text-align: left">
+  <div class="card-footer text-muted" style="text-align: right">
+    <div style="float: left">
+      답변 수 : {{answers.size}}개
+    </div>
     <a href="/answers/create?id={{question.id}}">
     <input type="button" class="btn btn-outline-success" value="답변 작성"/>
     </a>
   </div>
 </div>
-
 <div class="list-group">
   {{#answers}}
     <div class="list-group-item list-group-item-action">
@@ -46,14 +47,49 @@
 
 
 <script>
+  var delete_click=true;
+  var update_click=true;
+
   var main = {
     init: function () {
       var _this = this;
       $('#btn-delete').on('click', function () {
-        _this.delete();
+        if (delete_click) {
+          var content = $('#content').val()
+          if (content.trim() === "" || content === null) {
+            alert("내용을 입력하세요!")
+            return;
+          }
+          _this.delete();
+          delete_click = !delete_click;
+
+          // 타이밍 추가
+          setTimeout(function () {
+            delete_click = true;
+          }, 2000)
+
+        } else {
+          alert("처리중 입니다!");
+        }
       });
       $('#btn-update').on('click', function () {
-        _this.update();
+        if (update_click) {
+          var content = $('#content').val()
+          if (content.trim() === "" || content === null) {
+            alert("내용을 입력하세요!")
+            return;
+          }
+          _this.update();
+          update_click = !update_click;
+
+          // 타이밍 추가
+          setTimeout(function () {
+            update_click = true;
+          }, 2000)
+
+        } else {
+          alert("처리중 입니다!");
+        }
       });
     },
     update: function () {
