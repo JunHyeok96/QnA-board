@@ -2,7 +2,7 @@
 <div class="card text-center">
   <div class="card-header">
     <div class="mb-1">
-      <h5>{{{post.title}}}</h5>
+      <h5>{{{question.title}}}</h5>
     </div>
     <div class="dropdown mr-1" style="float: right;">
       {{#updateButton}}
@@ -19,29 +19,29 @@
     </div>
   </div>
   <div class="card-body" style="text-align:left">
-    <pre><p class="card-text">{{{post.content}}}</p></pre>
+    <pre><p class="card-text">{{{question.content}}}</p></pre>
   </div>
 
   <div class="card-footer text-muted" style="text-align: left">
-    <a href="/post/create?post-type=A&&post-id={{post.id}}">
+    <a href="/answers/create?id={{question.id}}">
     <input type="button" class="btn btn-outline-success" value="답변 작성"/>
     </a>
   </div>
 </div>
 
 <div class="list-group">
-  {{#answer}}
+  {{#answers}}
     <div class="list-group-item list-group-item-action">
       <div class="d-flex w-100 justify-content-between">
         <small>{{createDate}}</small>
       </div>
-      <p class="mb-1">{{{content}}}</p>
+      <pre><p class="mb-1">{{{content}}}</p></pre>
       <small>user : {{userId}}</small>
     </div>
-  {{/answer}}
+  {{/answers}}
 </div>
 
-<input type="hidden" id="id" value="{{post.id}}"/>
+<input type="hidden" id="id" value="{{question.id}}"/>
 {{>layout/footer}}
 
 
@@ -60,11 +60,11 @@
       var id = $('#id').val();
       $.ajax({
         type: 'GET',
-        url: '/post/update/' + id,
+        url: '/questions/update/' + id,
         dataType: 'text',
         contentType: 'application/json; charset=utf-8',
       }).done(function () {
-        window.location.href = '/post/update/' + id;
+        window.location.href = '/questions/update/' + id;
       }).fail(function (error) {
         if (error.status == 403) {
           alert('본인의 게시물만 수정할 수 있습니다.');
@@ -75,7 +75,7 @@
       var id = $('#id').val();
       $.ajax({
         type: 'DELETE',
-        url: '/post/' + id,
+        url: '/api/v1/questions/' + id,
         dataType: 'text',
         contentType: 'application/json; charset=utf-8',
       }).done(function () {

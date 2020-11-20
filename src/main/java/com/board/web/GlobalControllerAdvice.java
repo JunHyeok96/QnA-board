@@ -1,13 +1,11 @@
 package com.board.web;
 
-import com.board.domain.post.exception.MissmatchAuthor;
+import com.board.domain.question.exception.MissmatchAuthor;
 import com.board.domain.user.exception.AlreadyExistUser;
 import com.board.domain.user.exception.LoginException;
 import com.board.domain.user.exception.UserMismatchException;
 import com.board.domain.user.exception.UserNotFoundException;
-import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

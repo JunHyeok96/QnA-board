@@ -33,7 +33,7 @@
       {{/previous}}
       {{#previous}}
         <li class="page-item">
-          <a class="page-link" href="/page?no={{previous}}" aria-label="Previous">
+          <a class="page-link" href="/my-question?no={{previous}}" aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
@@ -42,7 +42,7 @@
         <li class="page-item disabled"><a class="page-link" href="#">1</a></li>
       {{/page}}
       {{#page}}
-        <li class="page-item" id="page_{{.}}"><a class="page-link" href="/page?no={{.}}">{{.}}</a>
+        <li class="page-item" id="page_{{.}}"><a class="page-link" href="/my-question?no={{.}}">{{.}}</a>
         </li>
       {{/page}}
       {{^next}}
@@ -54,7 +54,7 @@
       {{/next}}
       {{#next}}
         <li class="page-item">
-          <a class="page-link" href="/page?no={{next}}" aria-label="Next">
+          <a class="page-link" href="/my-question?no={{next}}" aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
           </a>
         </li>

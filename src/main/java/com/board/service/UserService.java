@@ -1,6 +1,5 @@
 package com.board.service;
 
-import com.board.config.SessionUser;
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
 import com.board.domain.user.exception.AlreadyExistUser;
@@ -8,9 +7,9 @@ import com.board.domain.user.exception.LoginException;
 import com.board.domain.user.exception.UserMismatchException;
 import com.board.domain.user.exception.UserNotFoundException;
 import com.board.web.HttpSessionUtils;
+import com.board.web.dto.user.UserLoginRequestDto;
 import com.board.web.dto.user.UserRequestDto;
 import com.board.web.dto.user.UserResponseDto;
-import com.board.web.dto.user.UserUpdateDto;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +27,9 @@ public class UserService {
 
   @Transactional
   public Long save(UserRequestDto dto) {
+    if (!dto.isVaild()) {
+      throw new IllegalStateException("유효하지 않은 값 입니다.");
+    }
     User user = userRepository.findByUserId(dto.getUserId());
     if (user == null) {
       Long id = userRepository.save(dto.toEntity()).getId();
@@ -38,18 +40,18 @@ public class UserService {
   }
 
   @Transactional
-  public Long update(String userId, UserUpdateDto dto, HttpSession session) {
-    User updateUser = userRepository.findByUserId(userId);
-    if (updateUser == null) {
-      throw new UserNotFoundException("해당 유저가 없습니다. id=" + userId);
+  public Long update(UserRequestDto updateUser, HttpSession session) {
+    UserResponseDto sessionUser = HttpSessionUtils.getUserFromSession(session);
+    User user = userRepository.findByUserId(updateUser.getUserId());
+    if (user == null) {
+      throw new UserNotFoundException("해당 유저가 없습니다. id=" + updateUser.getUserId());
     }
-    SessionUser user = HttpSessionUtils.getUserFromSession(session);
-    if (!user.matchUserId(userId)) {
+    if (!user.matchUserId(sessionUser.getUserId())) {
       throw new UserMismatchException("수정 권한이 없습니다.");
     }
-    updateUser.update(dto.getPassword(), dto.getName(), dto.getEmail()).getId();
-    HttpSessionUtils.updateUser(updateUser, session);
-    return updateUser.getId();
+    long id = user.update(updateUser).getId();
+    HttpSessionUtils.updateUser(user, session);
+    return id;
   }
 
   @Transactional(readOnly = true)
@@ -73,20 +75,24 @@ public class UserService {
   }
 
   @Transactional(readOnly = true)
-  public boolean login(String userId, String password, HttpSession session) {
+  public boolean login(UserLoginRequestDto requestDto, HttpSession session) {
+    if (!requestDto.isVaild()) {
+      throw new LoginException("유효하지 않은 값 입니다.");
+    }
     if (HttpSessionUtils.isLoginUser(session)) {
       return true;
     }
-    User user = userRepository.findByUserId(userId);
+    User user = userRepository.findByUserId(requestDto.getUserId());
     if (user == null) {
-      log.info("id : " + userId + "는 존재하지 않는 유저입니다.");
+      log.info("id : " + requestDto.getUserId() + "는 존재하지 않는 유저입니다.");
       throw new LoginException("로그인 정보를 확인해주세요");
-    } else if (!user.matchPassword(password)) {
-      log.info("id : " + userId + "님이 다른 비밀번호로 접근했습니다.");
+    } else if (!user.matchPassword(requestDto.getPassword())) {
+      log.info("id : " + requestDto.getUserId() + "님이 다른 비밀번호로 접근했습니다.");
       throw new LoginException("로그인 정보를 확인해주세요");
     } else {
-      session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user.makeSessionUser());
-      log.info("id : " + userId + "님이 로그인 하셨습니다.");
+      //TODO 쿠키를 이용한 로그인유지
+      session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user.makeSessionValue());
+      log.info("id : " + requestDto.getUserId() + "님이 로그인 하셨습니다.");
       return true;
     }
   }

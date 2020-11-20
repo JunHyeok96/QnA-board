@@ -6,12 +6,12 @@
 <body>
 {{>layout/header}}
 <div class="list-group" style="height: 750px; border: 1px solid rgba(0,0,0,.125)">
-  {{#questions}}
-    <a href="/questions/{{id}}" class="list-group-item list-group-item-action"
+  {{#answers}}
+    <a href="/questions/{{questionId}}" class="list-group-item list-group-item-action"
        style="height: 150px">
       <div class="d-flex w-100 justify-content-between">
         <div class="mb-1">
-          <h5>{{{title}}}</h5>
+          <pre><p class="content-preview">{{{content}}}</p></pre>
         </div>
         <small>{{createDate}}</small>
       </div>
@@ -19,7 +19,7 @@
       <small>{{userId}}</small>
       <span class="badge badge-primary badge-pill" style="float:right">answer count</span>
     </a>
-  {{/questions}}
+  {{/answers}}
 </div>
 <div style="text-align: center">
   <nav aria-label="Page navigation example">
@@ -33,7 +33,7 @@
       {{/previous}}
       {{#previous}}
         <li class="page-item">
-          <a class="page-link" href="/page?no={{previous}}" aria-label="Previous">
+          <a class="page-link" href="/my-answer?no={{previous}}" aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
@@ -42,7 +42,7 @@
         <li class="page-item disabled"><a class="page-link" href="#">1</a></li>
       {{/page}}
       {{#page}}
-        <li class="page-item" id="page_{{.}}"><a class="page-link" href="/page?no={{.}}">{{.}}</a>
+        <li class="page-item" id="page_{{.}}"><a class="page-link" href="/my-answer?no={{.}}">{{.}}</a>
         </li>
       {{/page}}
       {{^next}}
@@ -54,7 +54,7 @@
       {{/next}}
       {{#next}}
         <li class="page-item">
-          <a class="page-link" href="/page?no={{next}}" aria-label="Next">
+          <a class="page-link" href="/my-answer?no={{next}}" aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
           </a>
         </li>

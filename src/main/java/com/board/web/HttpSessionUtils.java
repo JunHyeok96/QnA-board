@@ -1,7 +1,7 @@
 package com.board.web;
 
-import com.board.config.SessionUser;
 import com.board.domain.user.User;
+import com.board.web.dto.user.UserResponseDto;
 import javax.servlet.http.HttpSession;
 
 public class HttpSessionUtils {
@@ -17,8 +17,8 @@ public class HttpSessionUtils {
     return sessionedUser == null ? false : true;
   }
 
-  public static SessionUser getUserFromSession(HttpSession session) {
-    return isLoginUser(session) ? (SessionUser) session.getAttribute(USER_SESSION_KEY) : null;
+  public static UserResponseDto getUserFromSession(HttpSession session) {
+    return isLoginUser(session) ? (UserResponseDto) session.getAttribute(USER_SESSION_KEY) : null;
   }
 
   public static void logout(HttpSession session) {

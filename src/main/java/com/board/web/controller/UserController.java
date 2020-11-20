@@ -1,12 +1,12 @@
 package com.board.web.controller;
 
 import com.board.config.Auth;
-import com.board.config.SessionUser;
 import com.board.domain.user.User;
 import com.board.service.UserService;
 import com.board.web.HttpSessionUtils;
 import com.board.web.dto.user.UserLoginRequestDto;
 import com.board.web.dto.user.UserRequestDto;
+import com.board.web.dto.user.UserResponseDto;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -45,7 +44,7 @@ public class UserController {
   @PostMapping("/user/login")
   public String login(@RequestBody UserLoginRequestDto requestDto, HttpSession session,
       HttpServletResponse response) {
-    if (userService.login(requestDto.getUserId(), requestDto.getPassword(), session)) {
+    if (userService.login(requestDto, session)) {
       return "redirect:/";
     } else {
       response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -60,17 +59,11 @@ public class UserController {
     return "redirect:/";
   }
 
-  @GetMapping("/user/list")
-  public String list(Model model) {
-    model.addAttribute("users", userService.findAll());
-    return "user/list";
-  }
-
   @Auth
   @GetMapping("/user/form/update")
   public String userForm(Model model, HttpSession session) {
-    SessionUser user = HttpSessionUtils.getUserFromSession(session);
-    model.addAttribute("user", userService.findByUserId(user.getUserId()));
+    UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
+    model.addAttribute("user", user);
     return "user/updateForm";
   }
 }

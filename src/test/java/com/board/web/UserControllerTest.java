@@ -4,12 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-import com.board.config.SessionUser;
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
 import com.board.web.dto.user.UserLoginRequestDto;
 import com.board.web.dto.user.UserRequestDto;
-import com.board.web.dto.user.UserUpdateDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.collection.IsCollectionWithSize;
 import org.junit.After;
@@ -82,7 +80,7 @@ public class UserControllerTest {
         .andExpect(status().is3xxRedirection());
 
     List<User> userAll = userRepository.findAll();
-    User user = userAll.get(userAll.size()-1);
+    User user = userAll.get(userAll.size() - 1);
 
     //then
     assertThat(user.getName()).isEqualTo(name);
@@ -92,46 +90,37 @@ public class UserControllerTest {
   }
 
   @Test
-  public void 사용자목록조회() throws Exception {
-    userRepository.save(userRequestDto.toEntity());
-    int size = userRepository.findAll().size();
-
-    String url = "http://localhost:" + port + "/user/list";
-    this.mvc.perform(MockMvcRequestBuilders.get(url))
-        .andExpect(status().isOk())
-        .andExpect(model().attribute("users", IsCollectionWithSize.hasSize(size)));
-  }
-
-  @Test
   public void 사용자정보수정() throws Exception {
 
     //given
     String updateName = "제이그래머";
     String updatePassword = "wpdlrmfoaj";
 
-    SessionUser sessionUser = SessionUser.builder()
+    User sessionUser = User.builder()
         .name(name)
         .userId(id)
         .password(password)
         .email(email)
         .build();
 
-    String saveId = userRepository.save(userRequestDto.toEntity()).getUserId();
-    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, sessionUser);
+    String saveId = userRepository.save(sessionUser).getUserId();
+    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, sessionUser.makeSessionValue());
 
-    UserUpdateDto updateDto = UserUpdateDto.builder()
+    UserRequestDto updateDto = UserRequestDto.builder()
         .name(updateName)
         .password(updatePassword)
         .email(email)
+        .userId(id)
         .build();
 
-    String url = "http://localhost:" + port + "/user/" + saveId + "/update";
+    String url = "http://localhost:" + port + "/api/v1/user/" + saveId;
 
+    System.out.println(HttpSessionUtils.getUserFromSession(session));
     //when
     this.mvc.perform(put(url).contentType(MediaType.APPLICATION_JSON)
         .content(new ObjectMapper().writeValueAsString(updateDto))
         .session(session))
-        .andExpect(status().is3xxRedirection());
+        .andExpect(status().isOk());
 
     //then
     User user = userRepository.findByUserId(saveId);
@@ -147,33 +136,27 @@ public class UserControllerTest {
     String updateName = "제이그래머";
     String updatePassword = "wpdlrmfoaj";
 
-    String saveId = userRepository.save(userRequestDto.toEntity()).getUserId();
-
-    UserRequestDto newUser = UserRequestDto.builder()
+    User sessionUser = User.builder()
         .userId(id + "_2")
         .name(name)
         .password(password)
         .email(email)
         .build();
 
-    SessionUser sessionUser = SessionUser.builder()
-        .userId(id + "_2")
-        .name(name)
-        .password(password)
-        .email(email)
-        .build();
+    String saveId = userRepository.save(sessionUser).getUserId();
 
-    userRepository.save(newUser.toEntity()).getId();
+    session.setAttribute("sessionedUser", sessionUser.makeSessionValue());
 
-    session.setAttribute("sessionedUser", sessionUser);
-
-    UserUpdateDto updateDto = UserUpdateDto.builder()
+    UserRequestDto updateDto = UserRequestDto.builder()
         .name(updateName)
         .password(updatePassword)
         .email(email)
+        .userId(id)
         .build();
 
-    String url = "http://localhost:" + port + "/user/" + saveId + "/update";
+    userRepository.save(updateDto.toEntity()).getUserId();
+
+    String url = "http://localhost:" + port + "/api/v1/user/" + saveId;
 
     //when
     this.mvc.perform(put(url).contentType(MediaType.APPLICATION_JSON)
@@ -196,7 +179,8 @@ public class UserControllerTest {
     //when
     this.mvc.perform(MockMvcRequestBuilders.post(url)
         .contentType(MediaType.APPLICATION_JSON)
-        .content(new ObjectMapper().writeValueAsString(new UserLoginRequestDto(id, password))))
+        .content(
+            new ObjectMapper().writeValueAsString(new UserLoginRequestDto(id, password, false))))
         .andExpect(status().is3xxRedirection());
   }
 
@@ -209,7 +193,7 @@ public class UserControllerTest {
     //when
     this.mvc.perform(MockMvcRequestBuilders.post(url)
         .contentType(MediaType.APPLICATION_JSON)
-        .content(new ObjectMapper().writeValueAsString(new UserLoginRequestDto(id, " "))))
+        .content(new ObjectMapper().writeValueAsString(new UserLoginRequestDto(id, " ", false))))
         .andExpect(status().isForbidden());
   }
 
@@ -222,7 +206,8 @@ public class UserControllerTest {
     //when
     this.mvc.perform(MockMvcRequestBuilders.post(url)
         .contentType(MediaType.APPLICATION_JSON)
-        .content(new ObjectMapper().writeValueAsString(new UserLoginRequestDto(" ", password))))
+        .content(
+            new ObjectMapper().writeValueAsString(new UserLoginRequestDto(" ", password, false))))
         .andExpect(status().isForbidden());
   }
 
@@ -247,7 +232,8 @@ public class UserControllerTest {
     //when
     this.mvc.perform(MockMvcRequestBuilders.post(url)
         .contentType(MediaType.APPLICATION_JSON)
-        .content(new ObjectMapper().writeValueAsString(new UserLoginRequestDto(id, password)))
+        .content(
+            new ObjectMapper().writeValueAsString(new UserLoginRequestDto(id, password, false)))
         .session(session))
         .andExpect(status().is3xxRedirection());
   }

@@ -1,4 +1,4 @@
-package com.board.domain.post.exception;
+package com.board.domain.question.exception;
 
 public class MissmatchAuthor extends IllegalStateException {
 

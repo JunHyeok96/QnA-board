@@ -39,7 +39,7 @@
       };
       $.ajax({
         type: 'PUT',
-        url: '/user/' + data.userId + "/update",
+        url: '/api/v1/user/' + data.userId,
         dataType: 'text',
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(data)

@@ -1,11 +1,12 @@
 package com.board.web.dto.user;
 
 import com.board.domain.user.User;
+import java.io.Serializable;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class UserRequestDto {
+public class UserRequestDto implements Serializable {
 
   private String userId;
   private String name;
@@ -29,13 +30,12 @@ public class UserRequestDto {
         .build();
   }
 
-  @Override
-  public String toString() {
-    return "User{" +
-        "userId='" + userId + '\'' +
-        ", name='" + name + '\'' +
-        ", password='" + password + '\'' +
-        ", email='" + email + '\'' +
-        '}';
+  public boolean isVaild() {
+    if (this.userId.isEmpty() || this.password.isEmpty()) {
+      return false;
+    }
+    return true;
   }
+
+
 }

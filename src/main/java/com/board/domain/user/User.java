@@ -1,14 +1,14 @@
 package com.board.domain.user;
 
-import com.board.config.SessionUser;
 import com.board.domain.BaseTimeEntity;
-import com.board.web.HttpSessionUtils;
+import com.board.web.dto.user.UserRequestDto;
+import com.board.web.dto.user.UserResponseDto;
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.servlet.http.HttpSession;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Entity
-public class User extends BaseTimeEntity {
+public class User extends BaseTimeEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,18 +35,23 @@ public class User extends BaseTimeEntity {
   private String email;
 
   @Builder
-  public User(String userId, String password, String name, String email) {
+  public User(Long id, String userId, String password, String name, String email) {
+    this.id = id;
     this.userId = userId;
     this.password = password;
     this.name = name;
     this.email = email;
   }
 
-  public User update(String password, String name, String email) {
-    this.password = password;
-    this.name = name;
-    this.email = email;
+  public User update(UserRequestDto updateDto) {
+    this.password = updateDto.getPassword();
+    this.name = updateDto.getName();
+    this.email = updateDto.getEmail();
     return this;
+  }
+
+  public UserResponseDto makeSessionValue() {
+    return new UserResponseDto(this);
   }
 
   public boolean matchPassword(String newPassword) {
@@ -61,10 +66,6 @@ public class User extends BaseTimeEntity {
       return false;
     }
     return newUserId.equals(userId);
-  }
-
-  public SessionUser makeSessionUser(){
-    return new SessionUser(userId, email, name, password);
   }
 
 }

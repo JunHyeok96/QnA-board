@@ -5,16 +5,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
-import com.board.config.SessionUser;
 import com.board.domain.user.User;
 import com.board.domain.user.UserRepository;
 import com.board.domain.user.exception.AlreadyExistUser;
 import com.board.domain.user.exception.LoginException;
 import com.board.domain.user.exception.UserMismatchException;
-import com.board.domain.user.exception.UserNotFoundException;
 import com.board.web.HttpSessionUtils;
+import com.board.web.dto.user.UserLoginRequestDto;
 import com.board.web.dto.user.UserRequestDto;
-import com.board.web.dto.user.UserUpdateDto;
+import com.board.web.dto.user.UserResponseDto;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -58,21 +57,22 @@ public class UserServiceTest {
   @DisplayName("사용자 - 정보 수정")
   public void updateUser() {
     //given
-    SessionUser mockSessionedUser = mock(SessionUser.class);
+    UserResponseDto SessionedUser = mock(UserResponseDto.class);
+    UserRequestDto updateUser = mock(UserRequestDto.class);
+
     userService = new UserService(mockUserRepository);
 
-    UserUpdateDto userUpdateDto = mock(UserUpdateDto.class);
     when(HttpSessionUtils.isLoginUser(any())).thenReturn(true);
-    when(HttpSessionUtils.getUserFromSession(any())).thenReturn(mockSessionedUser);
+    when(HttpSessionUtils.getUserFromSession(any())).thenReturn(SessionedUser);
     when(mockUserRepository.findByUserId(any())).thenReturn(mockUser);
-    when(mockSessionedUser.matchUserId(any())).thenReturn(true);
-    when(mockUser.update(any(), any(), any())).thenReturn(mockUser);
+    when(mockUser.matchUserId(any())).thenReturn(true);
+    when(mockUser.update(updateUser)).thenReturn(mockUser);
 
     //when
-    Long id = userService.update("", userUpdateDto, mockHttpSession);
+    Long id = userService.update(updateUser, mockHttpSession);
 
     //then
-    verify(mockUser).update(any(), any(), any());
+    verify(mockUser).update(any());
     assertNotNull(id);
 
   }
@@ -82,16 +82,16 @@ public class UserServiceTest {
   public void failUpdateUser() {
     //given
     userService = new UserService(mockUserRepository);
-    SessionUser mockSessionedUser = mock(SessionUser.class);
+    UserResponseDto SessionedUser = mock(UserResponseDto.class);
+    UserRequestDto updateUser = mock(UserRequestDto.class);
 
-    UserUpdateDto userUpdateDto = mock(UserUpdateDto.class);
     when(HttpSessionUtils.isLoginUser(any())).thenReturn(true);
-    when(HttpSessionUtils.getUserFromSession(any())).thenReturn(mockSessionedUser);
+    when(HttpSessionUtils.getUserFromSession(any())).thenReturn(SessionedUser);
     when(mockUserRepository.findByUserId(any())).thenReturn(mockUser);
-    when(mockSessionedUser.matchUserId(any())).thenReturn(false);
+    when(mockUser.matchUserId(any())).thenReturn(false);
 
     //when
-    userService.update("", userUpdateDto, mockHttpSession);
+    userService.update(updateUser, mockHttpSession);
   }
 
   @Test
@@ -103,6 +103,7 @@ public class UserServiceTest {
 
     when(mockUserRepository.findByUserId(any())).thenReturn(null);
     when(mockUserRepository.save(any())).thenReturn(mockUser);
+    when(mockUserRequestDto.isVaild()).thenReturn(true);
     when(mockUser.getId()).thenReturn(0L);
 
     //when
@@ -119,6 +120,7 @@ public class UserServiceTest {
     userService = new UserService(mockUserRepository);
     UserRequestDto mockUserRequestDto = mock(UserRequestDto.class);
     when(mockUserRepository.findByUserId(any())).thenReturn(mockUser);
+    when(mockUserRequestDto.isVaild()).thenReturn(true);
 
     //when
     userService.save(mockUserRequestDto);
@@ -129,10 +131,12 @@ public class UserServiceTest {
   public void loginAgain() {
     //given
     userService = new UserService(mockUserRepository);
+    UserLoginRequestDto mockLoginDto = mock(UserLoginRequestDto.class);
     when(HttpSessionUtils.isLoginUser(any())).thenReturn(true);
+    when(mockLoginDto.isVaild()).thenReturn(true);
 
     //when
-    boolean isLogin = userService.login("", "", mockHttpSession);
+    boolean isLogin = userService.login(mockLoginDto, mockHttpSession);
 
     //then
     assertTrue(isLogin);
@@ -143,13 +147,14 @@ public class UserServiceTest {
   public void failLoginByPassword() {
     //given
     userService = new UserService(mockUserRepository);
+    UserLoginRequestDto mockLoginDto = mock(UserLoginRequestDto.class);
 
     when(HttpSessionUtils.isLoginUser(any())).thenReturn(false);
     when(mockUserRepository.findByUserId(any())).thenReturn(mockUser);
     when(mockUser.matchPassword(any())).thenReturn(false);
 
     //when
-    boolean isLogin = userService.login("", "", mockHttpSession);
+    boolean isLogin = userService.login(mockLoginDto, mockHttpSession);
 
   }
 
@@ -158,11 +163,12 @@ public class UserServiceTest {
   public void failLoginByNotExist() {
     //given
     userService = new UserService(mockUserRepository);
+    UserLoginRequestDto mockLoginDto = mock(UserLoginRequestDto.class);
     when(HttpSessionUtils.isLoginUser(any())).thenReturn(false);
     when(mockUserRepository.findByUserId(any())).thenReturn(null);
 
     //when
-    boolean isLogin = userService.login("", "", mockHttpSession);
+    boolean isLogin = userService.login(mockLoginDto, mockHttpSession);
 
   }
 
@@ -171,12 +177,14 @@ public class UserServiceTest {
   public void successLogin() {
     //given
     userService = new UserService(mockUserRepository);
+    UserLoginRequestDto mockLoginDto = mock(UserLoginRequestDto.class);
     when(HttpSessionUtils.isLoginUser(any())).thenReturn(false);
     when(mockUserRepository.findByUserId(any())).thenReturn(mockUser);
     when(mockUser.matchPassword(any())).thenReturn(true);
+    when(mockLoginDto.isVaild()).thenReturn(true);
 
     //when
-    boolean isLogin = userService.login("", "", mockHttpSession);
+    boolean isLogin = userService.login(mockLoginDto, mockHttpSession);
 
     //then
     assertTrue(isLogin);
