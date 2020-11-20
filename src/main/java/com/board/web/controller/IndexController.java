@@ -51,7 +51,8 @@ public class IndexController {
       return "/";
     }
     int maxPage = (int) questions.getTotalPages();
-    model.addAttribute("questions", questions.getContent());
+    model.addAttribute("questions",
+        questions.stream().map(QuestionResponseDto::new).collect(Collectors.toList()));
     pagingComponent(model, page, maxPage);
     return "index";
   }
