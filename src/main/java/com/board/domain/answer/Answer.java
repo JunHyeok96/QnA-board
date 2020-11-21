@@ -6,6 +6,7 @@ import com.board.domain.user.User;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,11 +31,11 @@ public class Answer extends BaseTimeEntity {
   @Lob
   private String content;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_question", value = ConstraintMode.NO_CONSTRAINT))
   private Question question;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_user", value = ConstraintMode.NO_CONSTRAINT))
   private User user;
 

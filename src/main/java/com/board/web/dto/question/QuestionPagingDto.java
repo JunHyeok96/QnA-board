@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public class QuestionResponseDto implements Serializable {
+public class QuestionPagingDto implements Serializable {
 
   private Long id;
   private String userId;
@@ -19,17 +19,17 @@ public class QuestionResponseDto implements Serializable {
   private String content;
   private LocalDateTime createDate;
   private LocalDateTime modifiedDate;
-  private List<Answer> answers;
+  private int answerCount;
 
   @Builder
-  public QuestionResponseDto(Question entry) {
+  public QuestionPagingDto(Question entry) {
     this.id = entry.getId();
     this.userId = entry.getUser() == null ? "guest" : entry.getUser().getUserId();
     this.title = entry.getTitle();
     this.content = entry.getContent();
     this.createDate = entry.getCreateDate();
     this.modifiedDate = entry.getModifiedDate();
-    this.answers = entry.getAnswers();
+    this.answerCount = entry.getAnswers().size();
   }
 
 }

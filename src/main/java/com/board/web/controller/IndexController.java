@@ -8,6 +8,7 @@ import com.board.service.QuestionService;
 import com.board.web.HttpSessionUtils;
 import com.board.web.PageUtils;
 import com.board.web.dto.Answer.AnswerResponseDto;
+import com.board.web.dto.question.QuestionPagingDto;
 import com.board.web.dto.question.QuestionResponseDto;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
@@ -34,11 +35,12 @@ public class IndexController {
 
   @GetMapping("/")
   public String index(Model model) {
+
     Page<Question> questions = questionService
         .findQuestionAll(PageRequest.of(0, CONTENT_SIZE, Sort.by("createDate").descending()));
     int maxPage = (int) questions.getTotalPages();
     model.addAttribute("questions",
-        questions.stream().map(QuestionResponseDto::new).collect(Collectors.toList()));
+        questions.stream().map(QuestionPagingDto::new).collect(Collectors.toList()));
     pagingComponent(model, 1, maxPage);
     return "index";
   }
@@ -52,7 +54,7 @@ public class IndexController {
     }
     int maxPage = (int) questions.getTotalPages();
     model.addAttribute("questions",
-        questions.stream().map(QuestionResponseDto::new).collect(Collectors.toList()));
+        questions.stream().map(QuestionPagingDto::new).collect(Collectors.toList()));
     pagingComponent(model, page, maxPage);
     return "index";
   }
@@ -78,7 +80,7 @@ public class IndexController {
             PageRequest.of(page - 1, CONTENT_SIZE, Sort.by("createDate").descending()));
     int maxPage = (int) questions.getTotalPages();
     model.addAttribute("questions",
-        questions.stream().map(QuestionResponseDto::new).collect(Collectors.toList()));
+        questions.stream().map(QuestionPagingDto::new).collect(Collectors.toList()));
     pagingComponent(model, page, maxPage);
     return "myQuestion";
   }

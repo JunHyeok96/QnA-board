@@ -5,11 +5,10 @@ import com.board.domain.answer.Answer;
 import com.board.domain.user.User;
 import com.board.web.dto.question.QuestionUpdateDto;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,7 +20,6 @@ import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -40,11 +38,11 @@ public class Question extends BaseTimeEntity {
   private String content;
 
   @ManyToOne
-  @JoinColumn(foreignKey = @ForeignKey(name = "fk_post_user", value = ConstraintMode.NO_CONSTRAINT))
+  @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_user", value = ConstraintMode.NO_CONSTRAINT))
   private User user;
 
-  @OneToMany(fetch = FetchType.LAZY)
-  private Set<Answer> answer;
+  @OneToMany(mappedBy = "question")
+  List<Answer> answers = new ArrayList<>();
 
   @Builder
   public Question(String title, String content, User user) {
@@ -56,10 +54,6 @@ public class Question extends BaseTimeEntity {
   public Question update(QuestionUpdateDto dto) {
     this.title = dto.getTitle();
     this.content = dto.getContent();
-    if (this.answer == null) {
-      this.answer = new HashSet<>();
-    }
-    this.answer.add(dto.getAnswer());
     return this;
   }
 

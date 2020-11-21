@@ -28,7 +28,6 @@ public class AnswerService {
 
   private final AnswerRepository answerRepository;
   private final QuestionRepository questionRepository;
-  private final UserRepository userRepository;
 
   @Transactional
   public long save(AnswerRequsetDto answerRequsetDto, HttpSession session) {
@@ -38,7 +37,6 @@ public class AnswerService {
     Answer answer = answerRequsetDto
         .toEntity(question, user);
     Long id = answerRepository.save(answer).getId();
-    question.update(new QuestionUpdateDto(question.getTitle(), question.getContent(), answer));
     return id;
   }
 
