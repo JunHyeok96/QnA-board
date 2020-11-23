@@ -5,7 +5,6 @@ import com.board.domain.question.QuestionRepository;
 import com.board.domain.question.exception.MissmatchAuthor;
 import com.board.domain.question.exception.PostNotFoundException;
 import com.board.domain.user.User;
-import com.board.domain.user.UserRepository;
 import com.board.domain.user.exception.LoginException;
 import com.board.web.HttpSessionUtils;
 import com.board.web.dto.question.QuestionRequestDto;
@@ -44,15 +43,9 @@ public class QuestionService {
   }
 
   @Transactional(readOnly = true)
-  public QuestionResponseDto findById(Long id) {
+  public QuestionResponseDto findById(long id) {
     return questionRepository.findById(id).map(QuestionResponseDto::new).get();
   }
-
-  @Transactional(readOnly = true)
-  public Question findByIdToEntity(Long id) {
-    return questionRepository.findById(id).get();
-  }
-
 
   @Transactional(readOnly = true)
   public Page<Question> findMyPosts(HttpSession session, Pageable pageable) {
@@ -63,7 +56,7 @@ public class QuestionService {
   @Transactional
   public Long save(QuestionRequestDto questionRequestDto, HttpSession session) {
     UserResponseDto sessionUser = HttpSessionUtils.getUserFromSession(session);
-    User user = sessionUser !=null ? sessionUser.toEntity() : null;
+    User user = sessionUser != null ? sessionUser.toEntity() : null;
     Question question = questionRequestDto.toEntity(user);
     Long id = questionRepository.save(question).getId();
     return id;
@@ -76,14 +69,14 @@ public class QuestionService {
     UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
     if (question.matchAuthor(user.getUserId())) {
       question.update(questionUpdateDto);
-    }else{
+    } else {
       throw new MissmatchAuthor("본인의 게시물만 수정할 수 있습니다.");
     }
     return id;
   }
 
   @Transactional
-  public void delete(long id, HttpSession session) {
+  public void delete(Long id, HttpSession session) {
     if (!HttpSessionUtils.isLoginUser(session)) {
       throw new LoginException("로그인되지 않았습니다.");
     }
@@ -98,5 +91,9 @@ public class QuestionService {
     }
   }
 
+  @Transactional(readOnly = true)
+  public Page<Question> search(String keyword, Pageable pageable) {
+    return questionRepository.search(keyword, pageable);
+  }
 
 }

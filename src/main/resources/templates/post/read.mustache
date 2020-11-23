@@ -1,25 +1,24 @@
 {{>layout/header}}
-<div class="card text-center">
-  <div class="card-header">
-    <div class="mb-1">
+<div class="card">
+  <ul class="card-header">
+    <div class="mb-1" style="text-align: center">
       <h5>{{{question.title}}}</h5>
     </div>
-    <div class="dropdown mr-1" style="float: right;">
-      {{#updateButton}}
-        <button type="button" class="btn btn-secondary dropdown-toggle" id="dropdownMenuOffset"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                data-offset="10,20">
-          더보기
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
-          <a href="#" class="dropdown-item" id="btn-update">수정</a>
-          <a href="#" class="dropdown-item" id="btn-delete">삭제</a>
-        </div>
-      {{/updateButton}}
-    </div>
-  </div>
-  <div class="card-body" style="text-align:left">
-    <pre><p class="card-text">{{{question.content}}}</p></pre>
+
+    <small style="text-align: left;"><span style="color: #a7a7a7;">{{question.userId}} &nbsp;  &nbsp; </span>
+    </small>
+    <small style="text-align: left;"><span style="color: #a7a7a7;">{{question.createDate}} &nbsp;  &nbsp; </span>
+    </small>
+    {{#updateButton}}
+      <small style="text-align: left;">
+        <a href="#" id="btn-update" style="color: #a7a7a7;">수정 &nbsp; &nbsp; </a></small>
+      <small style="text-align: left;">
+        <a href="#" id="btn-delete" style="color: #a7a7a7;">삭제 &nbsp; &nbsp; </a></small>
+    {{/updateButton}}
+    </strong>
+  </ul>
+  <div class="card-body">
+    <pre style="text-align:left;"><p class="card-text">{{{question.content}}}</p></pre>
   </div>
   <div class="card-footer text-muted" style="text-align: right">
     <div style="float: left">
@@ -100,9 +99,7 @@
       });
       $('#btn-delete').on('click', function () {
         if (delete_click) {
-          var content = $('#content').val()
-          if (content.trim() === "" || content === null) {
-            alert("내용을 입력하세요!")
+          if (confirm("글을 삭제하시겠습니까?") == false) {
             return;
           }
           _this.delete();
@@ -203,5 +200,4 @@
 </script>
 <script src="/js/summernote/summernote-lite.js"></script>
 <script src="/js/summernote/lang/summernote-ko-KR.js"></script>
-
 <link rel="stylesheet" href="/css/summernote/summernote-lite.css">

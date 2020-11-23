@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,22 +34,14 @@ public class QuestionController {
     return "post/create";
   }
 
-  @GetMapping("/answers/create")
-  public String answerCreate(int id, Model model) {
-    model.addAttribute("id", id);
-    return "post/answer";
-  }
-
-
   @GetMapping("/questions/{id}")
   public String read(@PathVariable Long id, Pageable pageable, Model model,
       HttpSession session) {
-    Question question = questionService.findByIdToEntity(id);
-    model.addAttribute("question", questionService.findById(id));
-    model.addAttribute("answers", answerService.findByQuestion(id, pageable).stream().map(
-        AnswerResponseDto::new).collect(Collectors.toList()));
+    QuestionResponseDto question = questionService.findById(id);
+    model.addAttribute("question", question);
+    model.addAttribute("answers", answerService.findByQuestion(id));
     UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
-    if (user != null && question.matchAuthor(user.getUserId())) {
+    if (user != null && question.getUserId().equals(user.getUserId())) {
       model.addAttribute("updateButton", true);
     }
     return "post/read";
@@ -58,12 +51,13 @@ public class QuestionController {
   @GetMapping("/questions/update/{id}")
   public String update(@PathVariable Long id, HttpSession session,
       Model model) {
-    Question question = questionService.findByIdToEntity(id);
+    QuestionResponseDto question = questionService.findById(id);
     UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
-    if (!question.matchAuthor(user.getUserId())) {
+    if (!question.getUserId().equals(user.getUserId())) {
       throw new MissmatchAuthor("본인 게시물만 수정할 수 있습니다.");
     }
-    model.addAttribute("question", new QuestionResponseDto(question));
+    model.addAttribute("question", question);
     return "post/update";
   }
+
 }

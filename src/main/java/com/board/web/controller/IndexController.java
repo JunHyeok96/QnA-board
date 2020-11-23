@@ -3,6 +3,7 @@ package com.board.web.controller;
 import com.board.config.Auth;
 import com.board.domain.answer.Answer;
 import com.board.domain.question.Question;
+import com.board.domain.question.exception.MissmatchAuthor;
 import com.board.service.AnswerService;
 import com.board.service.QuestionService;
 import com.board.web.HttpSessionUtils;
@@ -10,6 +11,7 @@ import com.board.web.PageUtils;
 import com.board.web.dto.Answer.AnswerResponseDto;
 import com.board.web.dto.question.QuestionPagingDto;
 import com.board.web.dto.question.QuestionResponseDto;
+import com.board.web.dto.user.UserResponseDto;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -83,6 +85,18 @@ public class IndexController {
         questions.stream().map(QuestionPagingDto::new).collect(Collectors.toList()));
     pagingComponent(model, page, maxPage);
     return "myQuestion";
+  }
+
+  @GetMapping("/search")
+  public String search(@RequestParam("no") int page, String keyword, Model model) {
+    Page<Question> questions = questionService.search(keyword.trim(),
+        PageRequest.of(page - 1, CONTENT_SIZE, Sort.by("createDate").descending()));
+    int maxPage = (int) questions.getTotalPages();
+    model.addAttribute("questions",
+        questions.stream().map(QuestionPagingDto::new).collect(Collectors.toList()));
+    model.addAttribute("keyword", keyword);
+    pagingComponent(model, page, maxPage);
+    return "search";
   }
 
   public Model pagingComponent(Model model, int page, int maxPage) {

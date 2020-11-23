@@ -4,6 +4,7 @@ import com.board.domain.answer.Answer;
 import com.board.domain.question.Question;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,9 +18,8 @@ public class QuestionResponseDto implements Serializable {
   private String userId;
   private String title;
   private String content;
-  private LocalDateTime createDate;
-  private LocalDateTime modifiedDate;
-  private List<Answer> answers;
+  private String createDate;
+  private String modifiedDate;
 
   @Builder
   public QuestionResponseDto(Question entry) {
@@ -27,9 +27,10 @@ public class QuestionResponseDto implements Serializable {
     this.userId = entry.getUser() == null ? "guest" : entry.getUser().getUserId();
     this.title = entry.getTitle();
     this.content = entry.getContent();
-    this.createDate = entry.getCreateDate();
-    this.modifiedDate = entry.getModifiedDate();
-    this.answers = entry.getAnswers();
+    this.createDate = entry.getCreateDate()
+        .format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
+    this.modifiedDate = entry.getModifiedDate()
+        .format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
   }
 
 }

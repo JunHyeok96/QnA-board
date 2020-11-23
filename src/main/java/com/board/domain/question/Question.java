@@ -4,11 +4,12 @@ import com.board.domain.BaseTimeEntity;
 import com.board.domain.answer.Answer;
 import com.board.domain.user.User;
 import com.board.web.dto.question.QuestionUpdateDto;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,6 +21,7 @@ import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @NoArgsConstructor
 @Getter
@@ -37,12 +39,14 @@ public class Question extends BaseTimeEntity {
   @Lob
   private String content;
 
-  @ManyToOne
+  @BatchSize(size = 5)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_user", value = ConstraintMode.NO_CONSTRAINT))
   private User user;
 
+  @BatchSize(size = 5)
   @OneToMany(mappedBy = "question")
-  List<Answer> answers = new ArrayList<>();
+  Set<Answer> answers = new LinkedHashSet<>();
 
   @Builder
   public Question(String title, String content, User user) {
