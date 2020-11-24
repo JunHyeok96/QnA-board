@@ -14,7 +14,16 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
   @EntityGraph(attributePaths = {"user"})
   Optional<Question> findById(Long id);
 
+  @EntityGraph(attributePaths = {"answers", "user"})
   Page<Question> findByUserId(Long userId, Pageable pageable);
+
+  @EntityGraph(attributePaths = {"user"})
+  @Query("select q from Question q \n"
+      + "inner join "
+      + "User u "
+      + "on q.user = u "
+      + "where u.userId = ?1")
+  Page<Question> findByUserId(String userId, Pageable pageable);
 
   @EntityGraph(attributePaths = {"user"})
   Page<Question> findAll(Pageable pageable);

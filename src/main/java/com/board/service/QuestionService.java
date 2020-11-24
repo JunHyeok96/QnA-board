@@ -53,6 +53,16 @@ public class QuestionService {
     return questionRepository.findByUserId(user.getId(), pageable);
   }
 
+  @Transactional(readOnly = true)
+  public Page<Question> findByUserId(long userId, Pageable pageable) {
+    return questionRepository.findByUserId(userId, pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<Question> findByUserId(String userId, Pageable pageable) {
+    return questionRepository.findByUserId(userId, pageable);
+  }
+
   @Transactional
   public Long save(QuestionRequestDto questionRequestDto, HttpSession session) {
     UserResponseDto sessionUser = HttpSessionUtils.getUserFromSession(session);

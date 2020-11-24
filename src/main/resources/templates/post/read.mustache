@@ -5,7 +5,7 @@
       <h5>{{{question.title}}}</h5>
     </div>
 
-    <small style="text-align: left;"><span style="color: #a7a7a7;">{{question.userId}} &nbsp;  &nbsp; </span>
+    <small style="text-align: left;"><span><a href="/search/user?no=1&id={{question.userId}}" style="color: #a7a7a7;">{{question.userId}}</a> &nbsp;  &nbsp; </span>
     </small>
     <small style="text-align: left;"><span style="color: #a7a7a7;">{{question.createDate}} &nbsp;  &nbsp; </span>
     </small>
@@ -42,12 +42,12 @@
 </div>
 <div class="list-group">
   {{#answers}}
-    <div class="list-group-item list-group-item-action">
+    <div class="list-group-item">
       <div class="d-flex w-100 justify-content-between">
-        <small>{{createDate}}</small>
+        <small style="color: #a7a7a7;">{{createDate}}</small>
       </div>
-      <pre><p class="mb-1">{{{content}}}</p></pre>
-      <small>user : {{userId}}</small>
+      <pre><p class="mb-1" style="color: #a7a7a7;">{{{content}}}</p></pre>
+      <small><a href="/search/user?no=1&id={{userId}}" style="color: #a7a7a7;">user : {{userId}}</a></small>
     </div>
   {{/answers}}
 </div>
