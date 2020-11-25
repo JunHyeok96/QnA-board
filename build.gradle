@@ -27,6 +27,10 @@ repositories {
 }
 
 dependencies {
+    implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.228')
+    implementation 'com.amazonaws:aws-java-sdk-s3'
+    compile("org.springframework.cloud:spring-cloud-aws-context:2.0.1.RELEASE")
+    compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-data-redis')
     compile('org.springframework.session:spring-session-data-redis')
     compile('org.springframework.boot:spring-boot-starter-mustache')

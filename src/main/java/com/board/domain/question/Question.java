@@ -39,7 +39,6 @@ public class Question extends BaseTimeEntity {
   @Lob
   private String content;
 
-  @BatchSize(size = 5)
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_user", value = ConstraintMode.NO_CONSTRAINT))
   private User user;

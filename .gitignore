@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 src/main/resources/application-real.properties
 src/main/generated
+src/main/resources/application.yml
 
 ### STS ###
 .apt_generated
