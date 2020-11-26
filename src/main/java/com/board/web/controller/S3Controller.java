@@ -34,14 +34,12 @@ public class S3Controller {
 
   @PostMapping("/upload")
   public String upload(@RequestParam("data") MultipartFile multipartFile) throws IOException {
-    //TODO 저장경로 설정
     String imgName = s3Uploader.upload(multipartFile, "static");
     return "/download?src=".concat(imgName);
   }
 
   @GetMapping("/download")
   public void download(@RequestParam String src, HttpServletResponse response) throws IOException {
-    //TODO 저장경로 호출
     HttpGet request = new HttpGet(s3Url + src);
     try {
       HttpResponse s3Response = client.execute(request);

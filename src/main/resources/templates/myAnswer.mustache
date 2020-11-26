@@ -1,9 +1,3 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
-</head>
-<body>
 {{>layout/header}}
 <div class="list-group" style="height: 750px; border: 1px solid rgba(0,0,0,.125)">
   {{#answers}}
@@ -15,8 +9,8 @@
         </div>
         <small>{{createDate}}</small>
       </div>
-      <pre><p class="content-preview"></p></pre>
       <small>{{userId}}</small>
+      <span class="badge badge-primary badge-pill" style="float:right"></span>
     </a>
   {{/answers}}
 </div>

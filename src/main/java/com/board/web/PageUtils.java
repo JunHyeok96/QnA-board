@@ -2,11 +2,14 @@ package com.board.web;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.ui.Model;
 
 /**
 start page 1 not 0
 */
 public class PageUtils {
+
+  private static final int PAGE_SIZE = 10;
 
   private PageUtils() {
   }
@@ -39,5 +42,19 @@ public class PageUtils {
       pageList.add(i);
     }
     return pageList;
+  }
+
+  public static Model pagingComponent(Model model, int page, int maxPage) {
+    int previousPage = previousPage(page, PAGE_SIZE);
+    int nextPage = nextPage(maxPage, page, PAGE_SIZE);
+    model.addAttribute("currentPage", page);
+    model.addAttribute("page", getPageList(maxPage, page, PAGE_SIZE));
+    if (page > PAGE_SIZE) {
+      model.addAttribute("previous", previousPage);
+    }
+    if (!(page == maxPage) && maxPage > PAGE_SIZE && nextPage <= maxPage) {
+      model.addAttribute("next", nextPage);
+    }
+    return model;
   }
 }

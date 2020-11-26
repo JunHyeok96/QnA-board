@@ -15,11 +15,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AnswerService {
@@ -46,8 +48,8 @@ public class AnswerService {
   }
 
   @Transactional(readOnly = true)
-  public Page<Answer> findByQuestion(Long questionId, Pageable pageable) {
-    return answerRepository.findByQuestionId(questionId, pageable);
+  public AnswerResponseDto findById(long id) {
+    return new AnswerResponseDto(answerRepository.findById(id).get());
   }
 
   @Transactional(readOnly = true)
@@ -63,7 +65,7 @@ public class AnswerService {
     Answer answer = answerRepository.findById(id)
         .orElseThrow(() -> new PostNotFoundException("존재하지 않는 답변"));
     UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
-    if (answer.getQuestion().matchAuthor(user.getUserId())) {
+    if (answer.getUser().matchUserId(user.getUserId())) {
       answer.update(content);
     } else {
       throw new MissmatchAuthor("본인의 답변만 수정할 수 있습니다.");
@@ -75,7 +77,7 @@ public class AnswerService {
     Answer answer = answerRepository.findById(id)
         .orElseThrow(() -> new PostNotFoundException("존재하지 않는 답변"));
     UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
-    if (answer.getQuestion().matchAuthor(user.getUserId())) {
+    if (answer.getUser().matchUserId(user.getUserId())) {
       answerRepository.deleteById(id);
     } else {
       throw new MissmatchAuthor("본인의 답변만 삭제할 수 있습니다.");

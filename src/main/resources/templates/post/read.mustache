@@ -5,15 +5,21 @@
       <h5>{{{question.title}}}</h5>
     </div>
 
-    <small style="text-align: left;"><span><a href="/search/user?no=1&id={{question.userId}}" style="color: #a7a7a7;">{{question.userId}}</a> &nbsp;  &nbsp; </span>
+    <small style="text-align: left;"><span><a href="javascript:void(0)"
+                                              onClick="search_question(this.name)"
+                                              name="{{question.userId}}"
+                                              style="color: #a7a7a7;">{{question.userId}}</a>
+      &nbsp;  &nbsp; </span>
     </small>
     <small style="text-align: left;"><span style="color: #a7a7a7;">{{question.createDate}} &nbsp;  &nbsp; </span>
     </small>
     {{#updateButton}}
       <small style="text-align: left;">
-        <a href="#" id="btn-update" style="color: #a7a7a7;">수정 &nbsp; &nbsp; </a></small>
+        <a href="/questions/update/{{id}}" id="btn-update" style="color: #a7a7a7;">수정 &nbsp;
+          &nbsp; </a></small>
       <small style="text-align: left;">
-        <a href="#" id="btn-delete" style="color: #a7a7a7;">삭제 &nbsp; &nbsp; </a></small>
+        <a href="javascript:void(0)" id="btn-delete" style="color: #a7a7a7;">삭제 &nbsp;
+          &nbsp; </a></small>
     {{/updateButton}}
     </strong>
   </ul>
@@ -36,18 +42,31 @@
 <div id="answer-form" style="display: none">
   <form>
     <div class="form-group">
-      <textarea id="summernote" name="editordata"></textarea>
+      <textarea id="summernote"></textarea>
     </div>
   </form>
 </div>
 <div class="list-group">
   {{#answers}}
     <div class="list-group-item">
-      <div class="d-flex w-100 justify-content-between">
-        <small style="color: #a7a7a7;">{{createDate}}</small>
+      <div>
+        <small style="text-align: left;"><a href="javascript:void(0)"
+                                            onClick="search_question(this.name)" name="{{userId}}"
+                                            style="color:
+          #a7a7a7;">{{userId}}</a>&nbsp; &nbsp; </small>
+        <small style="color: #a7a7a7;">{{createDate}} &nbsp; </small>
+        <small style="text-align: left;">
+          <a href="/my-answer/update?id={{id}}" class="answer-{{userId}}"
+          style="color: #a7a7a7; display: none">수정 &nbsp; </a>
+        </small>
+        <small style="text-align: left;">
+          <a href="javascript:void(0)" class="answer-{{userId}}"
+             onClick="answer_delete('{{id}}')" style="color: #a7a7a7; display: none">삭제 &nbsp;
+            &nbsp; </a>
+        </small>
       </div>
-      <pre><p class="mb-1" style="color: #a7a7a7;">{{{content}}}</p></pre>
-      <small><a href="/search/user?no=1&id={{userId}}" style="color: #a7a7a7;">user : {{userId}}</a></small>
+      <pre><p class="mb-1">{{{content}}}</p></pre>
+      </small>
     </div>
   {{/answers}}
 </div>
@@ -62,7 +81,20 @@
   var save_click = true;
   document.getElementById('answer-cancel').style.display = "none";
   document.getElementById('answer-save').style.display = "none";
+    {{#answers}}
+    var answer_userId = '{{userId}}';
+    var sessioned_userId = '';
+      {{#sessionedUser}}
+      sessioned_userId = '{{userId}}';
+      {{/sessionedUser}}
+    if (answer_userId == sessioned_userId) {
+      $('.answer-' + sessioned_userId).css({'display': 'inline-block'})
+    } else {
+      console.log('.answer-' + answer_userId + "사라짐");
+      $('.answer-' + answer_userId).remove();
+    }
 
+    {{/answers}}
   var main = {
     init: function () {
       var _this = this;
@@ -114,9 +146,6 @@
           alert("처리중 입니다!");
         }
       });
-      $('#btn-update').on('click', function () {
-        _this.update();
-      });
     },
     save: function () {
       var data = {
@@ -136,21 +165,6 @@
         alert(error.responseText);
       });
     },
-    update: function () {
-      var id = $('#id').val();
-      $.ajax({
-        type: 'GET',
-        url: '/questions/update/' + id,
-        dataType: 'text',
-        contentType: 'application/json; charset=utf-8',
-      }).done(function () {
-        window.location.href = '/questions/update/' + id;
-      }).fail(function (error) {
-        if (error.status == 403) {
-          alert('본인의 게시물만 수정할 수 있습니다.');
-        }
-      })
-    },
     delete: function () {
       var id = $('#id').val();
       $.ajax({
@@ -162,42 +176,42 @@
         alert('글이 삭제되었습니다.');
         window.location.href = '/';
       }).fail(function (error) {
-        alert(error.responseText);
+        if (error.status == 403) {
+          alert('본인의 게시물만 삭제할 수 있습니다.');
+        }
         if (error.status == 401) {
           window.location.href = '/user/login';
         }
       })
-    }
+    },
+
   };
-  $(document).ready(function () {
-    //여기 아래 부분
-    $('#summernote').summernote({
-      height: 500,                 // 에디터 높이
-      minHeight: 500,             // 최소 높이
-      maxHeight: 500,             // 최대 높이
-      focus: true,                  // 에디터 로딩후 포커스를 맞출지 여부
-      lang: "ko-KR",					// 한글 설정
-      placeholder: '내용을 입력해주세요.',	//placeholder 설정
-      toolbar: [
-        // [groupName, [list of button]]
-        ['fontname', ['fontname']],
-        ['fontsize', ['fontsize']],
-        ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
-        ['color', ['forecolor', 'color']],
-        ['table', ['table']],
-        ['para', ['ul', 'ol', 'paragraph']],
-        ['height', ['height']],
-        ['insert', ['picture', 'link', 'video']],
-        ['view', ['fullscreen', 'help']]
-      ],
-      fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', '맑은 고딕', '궁서', '굴림체',
-        '굴림', '돋음체', '바탕체'],
-      fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '28', '30', '36',
-        '50', '72']
-    });
-  });
+
+  function answer_delete(id) {
+    if (confirm("답변을 삭제하시겠습니까?") == false) {
+      return;
+    }
+    $.ajax({
+      type: 'DELETE',
+      url: '/api/v1/answers/' + id,
+      dataType: 'text',
+      contentType: 'application/json; charset=utf-8',
+    }).done(function () {
+      alert('답변이 삭제되었습니다.');
+      window.location.reload();
+    }).fail(function (error) {
+      if (error.status == 403) {
+        alert('본인의 게시물만 삭제할 수 있습니다.');
+      }
+    })
+  }
+
+  function search_question(userId) {
+    if (userId != 'guest') {
+      window.location.href = '/search/user?no=1&id=' + userId;
+    }
+  }
+
   main.init();
 </script>
-<script src="/js/summernote/summernote-lite.js"></script>
-<script src="/js/summernote/lang/summernote-ko-KR.js"></script>
-<link rel="stylesheet" href="/css/summernote/summernote-lite.css">
+{{>layout/editor}}

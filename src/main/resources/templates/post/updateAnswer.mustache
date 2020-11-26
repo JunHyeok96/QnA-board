@@ -1,41 +1,28 @@
 {{>layout/header}}
-
 <form>
   <div class="form-group">
-    <label>제목</label>
-    <input type="text" class="form-control" id="title" aria-describedby="titleInput"
-           required="true">
-  </div>
-  <div class="form-group">
     <label>내용</label>
-    <textarea id="summernote"></textarea>
+    <textarea id="summernote">{{answer.content}}</textarea>
   </div>
 </form>
-<button type="button" id="btn-save" class="btn btn-primary">확인</button>
-
+<button type="submit" id="btn-update" class="btn btn-primary">확인</button>
 {{>layout/footer}}
 
 <script>
   var click = true;
-  document.getElementById('summernote').style.display = "block";
+
   var main = {
     init: function () {
       var _this = this;
-      $('#btn-save').on('click', function () {
+      $('#btn-update').on('click', function () {
         if (click) {
-          var title = $('#title').val()
           var content = $('#summernote').val()
-          if (title.trim() === "" || title === null) {
-            alert("제목을 입력하세요!")
-            return;
-          }
           if (content.trim() === "" || content === null) {
             alert("내용을 입력하세요!")
             return;
           }
-          _this.save();
+          _this.update();
           click = !click;
-
           // 타이밍 추가
           setTimeout(function () {
             click = true;
@@ -46,27 +33,25 @@
         }
       });
     },
-    save: function () {
+    update: function () {
       var data = {
-        title: $('#title').val(),
-        content: $('#summernote').val(),
+        content: $('#summernote').val()
       };
       $.ajax({
-        type: 'POST',
-        url: '/api/v1/questions',
+        type: 'PUT',
+        url: '/api/v1/answers/{{answer.id}}',
         dataType: 'text',
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(data)
       }).done(function () {
-        alert('글이 등록되었습니다.');
-        window.location.href = '/';
+        alert('답변이 수정되었습니다.');
+        window.location.href = '/questions/' + {{answer.questionId}}
       }).fail(function (error) {
         alert(error.responseText);
       });
     },
-  }
+  };
 
   main.init();
 </script>
-
 {{>layout/editor}}

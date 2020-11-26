@@ -10,13 +10,11 @@ import com.board.web.HttpSessionUtils;
 import com.board.web.dto.user.UserLoginRequestDto;
 import com.board.web.dto.user.UserRequestDto;
 import com.board.web.dto.user.UserResponseDto;
-import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -52,20 +50,6 @@ public class UserService {
     long id = user.update(updateUser).getId();
     HttpSessionUtils.updateUser(user, session);
     return id;
-  }
-
-  @Transactional(readOnly = true)
-  public List<UserResponseDto> findAll() {
-    return userRepository.findAll().stream()
-        .map(UserResponseDto::new)
-        .collect(Collectors.toList());
-  }
-
-  @Transactional(readOnly = true)
-  public UserResponseDto findById(Long id) {
-    User entity = userRepository.findById(id)
-        .orElseThrow(() -> new UserNotFoundException("해당 유저가 없습니다. id=" + id));
-    return new UserResponseDto(entity);
   }
 
   @Transactional(readOnly = true)
