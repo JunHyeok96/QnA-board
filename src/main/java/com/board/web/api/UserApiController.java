@@ -1,6 +1,7 @@
 package com.board.web.api;
 
 import com.board.config.Auth;
+import com.board.config.Auth.Role;
 import com.board.config.AuthUser;
 import com.board.service.UserService;
 import com.board.web.dto.user.UserRequestDto;
@@ -22,6 +23,7 @@ public class UserApiController {
 
   private final UserService userService;
 
+  @Auth
   @PutMapping("/api/v1/user/{userId}")
   public void update(@PathVariable String userId, @RequestBody UserRequestDto updateUser,
       HttpSession session) throws IOException {
@@ -32,5 +34,12 @@ public class UserApiController {
   public String read(@AuthUser UserResponseDto responseDto) {
     log.info(responseDto.getUserId());
     return "post/read";
+  }
+
+  @Auth(role = Role.ADMIN)
+  @PutMapping("/api/v1/admin/user/{userId}")
+  public void updateByAdmin(@PathVariable String userId, @RequestBody UserRequestDto updateUser,
+      HttpSession session) throws IOException {
+    userService.updateByAdmin(updateUser, session);
   }
 }

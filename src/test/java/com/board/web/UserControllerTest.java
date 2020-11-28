@@ -211,4 +211,75 @@ public class UserControllerTest {
         .andExpect(status().is3xxRedirection());
   }
 
+  @Test
+  public void 관리자권한_수정() throws Exception {
+    //given
+    String updateName = "제이그래머";
+    String updatePassword = "wpdlrmfoaj";
+    User normalUser = User.builder()
+        .name(name)
+        .userId(id)
+        .password(password)
+        .email(email)
+        .build();
+    String saveId = userRepository.save(normalUser).getUserId();
+    String userId = "admin";
+    User admin = User.builder()
+        .name(name)
+        .userId(userId)
+        .password(password)
+        .email(email)
+        .build();
+    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, admin.makeSessionValue());
+    UserRequestDto updateDto = UserRequestDto.builder()
+        .name(updateName)
+        .password(updatePassword)
+        .email(email)
+        .userId(id)
+        .build();
+    String url = "http://localhost:" + port + "/api/v1/admin/user/" + saveId;
+    System.out.println(HttpSessionUtils.getUserFromSession(session));
+    //when
+    this.mvc.perform(put(url).contentType(MediaType.APPLICATION_JSON)
+        .content(new ObjectMapper().writeValueAsString(updateDto))
+        .session(session))
+        .andExpect(status().isOk());
+    //then
+    User user = userRepository.findByUserId(saveId);
+    assertThat(user.getName()).isEqualTo(updateName);
+    assertThat(user.getPassword()).isEqualTo(updatePassword);
+  }
+
+  @Test
+  public void 일반유저_관리자권한_수정호출() throws Exception {
+    //given
+    String updateName = "제이그래머";
+    String updatePassword = "wpdlrmfoaj";
+    User normalUser = User.builder()
+        .userId(id + "_2")
+        .name(name)
+        .password(password)
+        .email(email)
+        .build();
+    String saveId = userRepository.save(normalUser).getUserId();
+    session.setAttribute("sessionedUser", normalUser.makeSessionValue());
+    UserRequestDto updateDto = UserRequestDto.builder()
+        .name(updateName)
+        .password(updatePassword)
+        .email(email)
+        .userId(id)
+        .build();
+    userRepository.save(updateDto.toEntity()).getUserId();
+    String url = "http://localhost:" + port + "/api/v1/admin/user/" + saveId;
+    //when
+    this.mvc.perform(put(url).contentType(MediaType.APPLICATION_JSON)
+        .content(new ObjectMapper().writeValueAsString(updateDto))
+        .session(session))
+        .andExpect(status().isForbidden());
+    //then
+    User user = userRepository.findByUserId(saveId);
+    assertThat(user.getName()).isEqualTo(name);
+    assertThat(user.getPassword()).isEqualTo(password);
+  }
+
 }

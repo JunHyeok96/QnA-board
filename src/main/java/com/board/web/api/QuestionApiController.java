@@ -1,6 +1,7 @@
 package com.board.web.api;
 
 import com.board.config.Auth;
+import com.board.config.Auth.Role;
 import com.board.config.AuthUser;
 import com.board.service.QuestionService;
 import com.board.web.dto.question.QuestionPagingDto;
@@ -70,4 +71,17 @@ public class QuestionApiController {
         .map(QuestionPagingDto::new)
         .collect(Collectors.toList());
   }
+
+  @Auth(role = Role.ADMIN)
+  @PutMapping("/api/v1/admin/questions/{id}")
+  public void updateByAdmin(@PathVariable Long id, @RequestBody QuestionUpdateDto updateDto) {
+    questionService.updateByAdmin(id, updateDto);
+  }
+
+  @Auth(role = Role.ADMIN)
+  @DeleteMapping("/api/v1/admin/questions/{id}")
+  public void deleteByAdmin(@PathVariable Long id) {
+    questionService.deleteByAdmin(id);
+  }
+
 }

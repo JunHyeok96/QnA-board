@@ -99,4 +99,20 @@ public class QuestionService {
     return questionRepository.search(keyword, pageable);
   }
 
+  @Transactional
+  public Long updateByAdmin(Long id, QuestionUpdateDto questionUpdateDto) {
+    Question question = questionRepository.findById(id)
+        .orElseThrow(() -> new PostNotFoundException("존재하지 않는 게시물"));
+    question.update(questionUpdateDto);
+    return id;
+  }
+
+  @Transactional
+  public void deleteByAdmin(Long id) {
+    Question question = questionRepository.findById(id)
+        .orElseThrow(() -> new PostNotFoundException("존재하지 않는 게시물"));
+    questionRepository.delete(question);
+    answerService.deleteByQuestion(question);
+  }
+
 }

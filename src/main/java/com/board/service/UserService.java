@@ -80,4 +80,13 @@ public class UserService {
       return true;
     }
   }
+
+  @Transactional
+  public Long updateByAdmin(UserRequestDto updateUser, HttpSession session) {
+    User user = userRepository.findByUserId(updateUser.getUserId());
+    long id = user.update(updateUser).getId();
+    HttpSessionUtils.updateUser(user, session);
+    return id;
+  }
+
 }

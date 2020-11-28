@@ -1,11 +1,13 @@
 package com.board.config;
 
 import com.board.web.HttpSessionUtils;
+import com.board.web.dto.user.UserResponseDto;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -30,14 +32,26 @@ public class AuthLoginInterceptor extends HandlerInterceptorAdapter {
     }
 
     HttpSession session = request.getSession();
+    UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
+
     if (!HttpSessionUtils.isLoginUser(session)) {
       if (request.getMethod().equals("PUT") || request.getMethod().equals("DELETE")) {
-        response.setStatus(401);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         return false;
       }
-      response.setStatus(303);
+      response.setStatus(HttpStatus.SEE_OTHER.value());
       response.setHeader(HttpHeaders.LOCATION, "/user/login");
       return false;
+    }
+
+    String role = auth.role().toString();
+    if ("ADMIN".equals(role)) {
+      if ("admin".equals(user.getUserId())) {
+        return true;
+      } else {
+        response.setStatus(HttpStatus.FORBIDDEN.value());
+        return false;
+      }
     }
 
     return true;

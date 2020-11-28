@@ -81,6 +81,20 @@ public class AnswerService {
   }
 
   @Transactional
+  public void updateByAdmin(long id, String content) {
+    Answer answer = answerRepository.findById(id)
+        .orElseThrow(() -> new PostNotFoundException("존재하지 않는 답변"));
+    answer.update(content);
+  }
+
+  @Transactional
+  public void deleteByAdmin(long id) {
+    Answer answer = answerRepository.findById(id)
+        .orElseThrow(() -> new PostNotFoundException("존재하지 않는 답변"));
+    answerRepository.deleteById(id);
+  }
+
+  @Transactional
   public void deleteByQuestion(Question question) {
     answerRepository.deleteByQuestion(question);
   }

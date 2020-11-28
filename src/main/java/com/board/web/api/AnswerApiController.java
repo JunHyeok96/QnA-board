@@ -1,6 +1,7 @@
 package com.board.web.api;
 
 import com.board.config.Auth;
+import com.board.config.Auth.Role;
 import com.board.config.AuthUser;
 import com.board.service.AnswerService;
 import com.board.web.dto.Answer.AnswerRequsetDto;
@@ -8,7 +9,6 @@ import com.board.web.dto.Answer.AnswerResponseDto;
 import com.board.web.dto.user.UserResponseDto;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,6 +47,18 @@ public class AnswerApiController {
   @DeleteMapping("/api/v1/answers/{id}")
   public void delete(@PathVariable Long id, @AuthUser UserResponseDto user) {
     answerService.delete(id, user);
+  }
+
+  @Auth(role = Role.ADMIN)
+  @PutMapping("/api/v1/admin/answers/{id}")
+  public void updateByAdmin(@PathVariable Long id, @RequestBody Map<String, String> map) {
+    answerService.updateByAdmin(id, map.get("content"));
+  }
+
+  @Auth(role = Role.ADMIN)
+  @DeleteMapping("/api/v1/admin/answers/{id}")
+  public void deleteByAdmin(@PathVariable Long id) {
+    answerService.deleteByAdmin(id);
   }
 
 }

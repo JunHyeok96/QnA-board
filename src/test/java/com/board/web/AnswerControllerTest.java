@@ -62,6 +62,7 @@ public class AnswerControllerTest {
   private WebApplicationContext webApplicationContext;
 
   private final String API = "http://localhost:" + port + "/api/v1/answers/";
+  private final String ADMIN_API = "http://localhost:" + port + "/api/v1/admin/answers/";
 
   private final QuestionRequestDto questionRequestDto = QuestionRequestDto.builder()
       .title("title")
@@ -263,4 +264,124 @@ public class AnswerControllerTest {
     assertThat(answer.getContent()).isEqualTo(content);
   }
 
+  @Test
+  @DisplayName("관리자 권한 답변 수정")
+  public void 관리자권한_답변수정() throws Exception {
+    //given
+    User testUser = userRepository.save(user);
+    Question question = questionRepository.save(questionRequestDto.toEntity(testUser));
+    String userId = "admin";
+    User admin = User.builder()
+        .email("111")
+        .name("2222")
+        .password("333")
+        .userId(userId)
+        .build();
+    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, new UserResponseDto(admin));
+    String content = "답변입니다.";
+    String updateContent = "수정된 답변입니다.";
+    AnswerRequsetDto requestDto = AnswerRequsetDto.builder()
+        .content(content)
+        .questionId(question.getId())
+        .build();
+    long answerId = answerRepository.save(requestDto.toEntity(question, testUser)).getId();
+    String url = ADMIN_API + answerId;
+    AnswerRequsetDto updateRequestDto = AnswerRequsetDto.builder()
+        .content(updateContent)
+        .questionId(question.getId())
+        .build();
+    //when
+    mvc.perform(MockMvcRequestBuilders.put(url)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(new ObjectMapper().writeValueAsString(updateRequestDto))
+        .session(session))
+        .andExpect(status().isOk());
+    //then
+    Answer updateAnswer = answerRepository.findById(answerId).get();
+    assertThat(updateAnswer.getContent()).isEqualTo(updateContent);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  @DisplayName("관리자 권한 답변 삭제")
+  public void 관리자_권한_답변삭제() throws Exception {
+    //given
+    String userId = "admin";
+    User testUser = userRepository.save(user);
+    Question question = questionRepository.save(questionRequestDto.toEntity(testUser));
+    User admin = User.builder()
+        .email("111")
+        .name("2222")
+        .password("333")
+        .userId(userId)
+        .build();
+    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, new UserResponseDto(admin));
+    String content = "답변입니다.";
+    AnswerRequsetDto requestDto = AnswerRequsetDto.builder()
+        .content(content)
+        .questionId(question.getId())
+        .build();
+    long answerId = answerRepository.save(requestDto.toEntity(question, testUser)).getId();
+    String url = ADMIN_API + answerId;
+    //when
+    mvc.perform(MockMvcRequestBuilders.delete(url)
+        .session(session))
+        .andExpect(status().isOk());
+    //then
+    answerRepository.findById(answerId).orElseThrow(() -> new IllegalArgumentException());
+  }
+
+  @Test
+  @DisplayName("일반유저 관리자 권한 삭제호출")
+  public void 일반유저_관리자_권한_삭제호출() throws Exception {
+    //given
+    User testUser = userRepository.save(user);
+    Question question = questionRepository.save(questionRequestDto.toEntity(testUser));
+    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, new UserResponseDto(testUser));
+    String content = "답변입니다.";
+    AnswerRequsetDto requestDto = AnswerRequsetDto.builder()
+        .content(content)
+        .questionId(question.getId())
+        .build();
+    long answerId = answerRepository.save(requestDto.toEntity(question, testUser)).getId();
+    String url = ADMIN_API + answerId;
+
+    //when
+    mvc.perform(MockMvcRequestBuilders.delete(url)
+        .session(session))
+        .andExpect(status().isForbidden());
+
+    //then
+    Answer answer = answerRepository.findById(answerId).get();
+    assertThat(answer.getContent()).isEqualTo(content);
+  }
+
+  @Test
+  @DisplayName("일반유저 관리자 권한 수정호출")
+  public void 일반유저_관리자_권한_수정호출() throws Exception {
+    //given
+    User testUser = userRepository.save(user);
+    Question question = questionRepository.save(questionRequestDto.toEntity(testUser));
+    session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, new UserResponseDto(testUser));
+    String content = "답변입니다.";
+    AnswerRequsetDto requestDto = AnswerRequsetDto.builder()
+        .content(content)
+        .questionId(question.getId())
+        .build();
+    long answerId = answerRepository.save(requestDto.toEntity(question, testUser)).getId();
+    String updateContent = "수정된 답변입니다.";
+    AnswerRequsetDto updateRequestDto = AnswerRequsetDto.builder()
+        .content(updateContent)
+        .questionId(question.getId())
+        .build();
+    String url = ADMIN_API + answerId;
+    //when
+    mvc.perform(MockMvcRequestBuilders.put(url)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(new ObjectMapper().writeValueAsString(updateRequestDto))
+        .session(session))
+        .andExpect(status().isForbidden());
+    //then
+    Answer updateAnswer = answerRepository.findById(answerId).get();
+    assertThat(updateAnswer.getContent()).isNotEqualTo(updateContent);
+  }
 }
