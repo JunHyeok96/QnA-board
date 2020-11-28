@@ -1,6 +1,7 @@
 package com.board.web.controller;
 
 import com.board.config.Auth;
+import com.board.config.AuthUser;
 import com.board.domain.question.Question;
 import com.board.domain.question.exception.MismatchAuthor;
 import com.board.service.AnswerService;
@@ -34,17 +35,15 @@ public class QuestionController {
   private final int CONTENT_SIZE = 5;
 
   @GetMapping("/questions/create")
-  public String create(HttpSession session) {
+  public String create() {
     return "post/create";
   }
 
   @GetMapping("/questions/{id}")
-  public String read(@PathVariable Long id, Pageable pageable, Model model,
-      HttpSession session) {
+  public String read(@PathVariable Long id, Model model, @AuthUser UserResponseDto user) {
     QuestionResponseDto question = questionService.findById(id);
     model.addAttribute("question", question);
     model.addAttribute("answers", answerService.findByQuestion(id));
-    UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
     if (user != null && question.getUserId().equals(user.getUserId())) {
       model.addAttribute("updateButton", true);
     }
@@ -53,10 +52,8 @@ public class QuestionController {
 
   @Auth
   @GetMapping("/questions/update/{id}")
-  public String update(@PathVariable Long id, HttpSession session,
-      Model model) {
+  public String update(@PathVariable Long id, @AuthUser UserResponseDto user, Model model) {
     QuestionResponseDto question = questionService.findById(id);
-    UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
     if (!question.getUserId().equals(user.getUserId())) {
       throw new MismatchAuthor("본인 게시물만 수정할 수 있습니다.");
     }
@@ -66,9 +63,10 @@ public class QuestionController {
 
   @Auth
   @GetMapping("/my-question")
-  public String myQuestions(@RequestParam("no") int page, HttpSession session, Model model) {
+  public String myQuestions(@RequestParam("no") int page, @AuthUser UserResponseDto user,
+      Model model) {
     Page<Question> questions = questionService
-        .findMyPosts(session,
+        .findMyPosts(user,
             PageRequest.of(page - 1, CONTENT_SIZE, Sort.by("createDate").descending()));
     int maxPage = (int) questions.getTotalPages();
     model.addAttribute("questions",

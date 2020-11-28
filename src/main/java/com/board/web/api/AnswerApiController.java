@@ -1,9 +1,11 @@
 package com.board.web.api;
 
 import com.board.config.Auth;
+import com.board.config.AuthUser;
 import com.board.service.AnswerService;
 import com.board.web.dto.Answer.AnswerRequsetDto;
 import com.board.web.dto.Answer.AnswerResponseDto;
+import com.board.web.dto.user.UserResponseDto;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpSession;
@@ -25,8 +27,8 @@ public class AnswerApiController {
   private final AnswerService answerService;
 
   @PostMapping("/api/v1/answers")
-  public void save(@RequestBody AnswerRequsetDto answerRequsetDto, HttpSession session) {
-    answerService.save(answerRequsetDto, session);
+  public void save(@RequestBody AnswerRequsetDto answerRequsetDto, @AuthUser UserResponseDto user) {
+    answerService.save(answerRequsetDto, user);
   }
 
   @GetMapping("/api/v1/answers/{id}")
@@ -36,14 +38,15 @@ public class AnswerApiController {
 
   @Auth
   @PutMapping("/api/v1/answers/{id}")
-  public void update(@PathVariable Long id, @RequestBody Map<String, String> map, HttpSession session) {
-    answerService.update(id, map.get("content"), session);
+  public void update(@PathVariable Long id, @RequestBody Map<String, String> map,
+      @AuthUser UserResponseDto user) {
+    answerService.update(id, map.get("content"), user);
   }
 
   @Auth
   @DeleteMapping("/api/v1/answers/{id}")
-  public void delete(@PathVariable Long id, HttpSession session) {
-    answerService.delete(id, session);
+  public void delete(@PathVariable Long id, @AuthUser UserResponseDto user) {
+    answerService.delete(id, user);
   }
 
 }

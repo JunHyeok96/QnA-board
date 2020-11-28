@@ -48,8 +48,7 @@ public class QuestionService {
   }
 
   @Transactional(readOnly = true)
-  public Page<Question> findMyPosts(HttpSession session, Pageable pageable) {
-    UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
+  public Page<Question> findMyPosts(UserResponseDto user, Pageable pageable) {
     return questionRepository.findByUserId(user.getId(), pageable);
   }
 
@@ -64,8 +63,7 @@ public class QuestionService {
   }
 
   @Transactional
-  public Long save(QuestionRequestDto questionRequestDto, HttpSession session) {
-    UserResponseDto sessionUser = HttpSessionUtils.getUserFromSession(session);
+  public Long save(QuestionRequestDto questionRequestDto, UserResponseDto sessionUser) {
     User user = sessionUser != null ? sessionUser.toEntity() : null;
     Question question = questionRequestDto.toEntity(user);
     Long id = questionRepository.save(question).getId();
@@ -73,10 +71,9 @@ public class QuestionService {
   }
 
   @Transactional
-  public Long update(Long id, QuestionUpdateDto questionUpdateDto, HttpSession session) {
+  public Long update(Long id, QuestionUpdateDto questionUpdateDto, UserResponseDto user) {
     Question question = questionRepository.findById(id)
         .orElseThrow(() -> new PostNotFoundException("존재하지 않는 게시물"));
-    UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
     if (question.matchAuthor(user.getUserId())) {
       question.update(questionUpdateDto);
     } else {
@@ -86,11 +83,7 @@ public class QuestionService {
   }
 
   @Transactional
-  public void delete(Long id, HttpSession session) {
-    if (!HttpSessionUtils.isLoginUser(session)) {
-      throw new LoginException("로그인되지 않았습니다.");
-    }
-    UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
+  public void delete(Long id, UserResponseDto user) {
     Question question = questionRepository.findById(id)
         .orElseThrow(() -> new PostNotFoundException("존재하지 않는 게시물"));
     if (question.matchAuthor(user.getUserId())) {

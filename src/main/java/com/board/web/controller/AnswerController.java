@@ -1,6 +1,7 @@
 package com.board.web.controller;
 
 import com.board.config.Auth;
+import com.board.config.AuthUser;
 import com.board.domain.answer.Answer;
 import com.board.domain.question.exception.MismatchAuthor;
 import com.board.service.AnswerService;
@@ -30,9 +31,10 @@ public class AnswerController {
 
   @Auth
   @GetMapping("/my-answer")
-  public String myAnswers(@RequestParam("no") int page, HttpSession session, Model model) {
+  public String myAnswers(@RequestParam("no") int page, @AuthUser UserResponseDto user,
+      Model model) {
     Page<Answer> answers = answerService
-        .findMyAnswers(session,
+        .findMyAnswers(user,
             PageRequest.of(page - 1, CONTENT_SIZE, Sort.by("createDate").descending()));
     int maxPage = (int) answers.getTotalPages();
     model.addAttribute("answers",
@@ -43,9 +45,8 @@ public class AnswerController {
 
   @Auth
   @GetMapping("/my-answer/update")
-  public String update(@RequestParam long id, HttpSession session, Model model) {
+  public String update(@RequestParam long id, @AuthUser UserResponseDto user, Model model) {
     AnswerResponseDto answer = answerService.findById(id);
-    UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
     if (user.getUserId().equals(answer.getUserId())) {
       model.addAttribute("answer", answer);
     } else {

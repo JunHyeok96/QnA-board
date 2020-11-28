@@ -30,8 +30,7 @@ public class AnswerService {
   private final QuestionRepository questionRepository;
 
   @Transactional
-  public long save(AnswerRequsetDto answerRequsetDto, HttpSession session) {
-    UserResponseDto sessionUser = HttpSessionUtils.getUserFromSession(session);
+  public long save(AnswerRequsetDto answerRequsetDto, UserResponseDto sessionUser) {
     User user = sessionUser != null ? sessionUser.toEntity() : null;
     Question question = questionRepository.findById(answerRequsetDto.getQuestionId()).get();
     Answer answer = answerRequsetDto
@@ -42,8 +41,7 @@ public class AnswerService {
 
 
   @Transactional(readOnly = true)
-  public Page<Answer> findMyAnswers(HttpSession session, Pageable pageable) {
-    UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
+  public Page<Answer> findMyAnswers(UserResponseDto user, Pageable pageable) {
     return answerRepository.findByUserId(user.getId(), pageable);
   }
 
@@ -61,10 +59,9 @@ public class AnswerService {
   }
 
   @Transactional
-  public void update(long id, String content, HttpSession session) {
+  public void update(long id, String content, UserResponseDto user) {
     Answer answer = answerRepository.findById(id)
         .orElseThrow(() -> new PostNotFoundException("존재하지 않는 답변"));
-    UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
     if (answer.getUser().matchUserId(user.getUserId())) {
       answer.update(content);
     } else {
@@ -73,10 +70,9 @@ public class AnswerService {
   }
 
   @Transactional
-  public void delete(long id, HttpSession session) {
+  public void delete(long id, UserResponseDto user) {
     Answer answer = answerRepository.findById(id)
         .orElseThrow(() -> new PostNotFoundException("존재하지 않는 답변"));
-    UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
     if (answer.getUser().matchUserId(user.getUserId())) {
       answerRepository.deleteById(id);
     } else {

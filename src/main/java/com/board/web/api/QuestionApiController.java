@@ -1,11 +1,13 @@
 package com.board.web.api;
 
 import com.board.config.Auth;
+import com.board.config.AuthUser;
 import com.board.service.QuestionService;
 import com.board.web.dto.question.QuestionPagingDto;
 import com.board.web.dto.question.QuestionRequestDto;
 import com.board.web.dto.question.QuestionResponseDto;
 import com.board.web.dto.question.QuestionUpdateDto;
+import com.board.web.dto.user.UserResponseDto;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,8 +33,9 @@ public class QuestionApiController {
   private final QuestionService questionService;
 
   @PostMapping("/api/v1/questions")
-  public void save(@RequestBody QuestionRequestDto questionRequestDto, HttpSession session) {
-    questionService.save(questionRequestDto, session);
+  public void save(@RequestBody QuestionRequestDto questionRequestDto,
+      @AuthUser UserResponseDto user) {
+    questionService.save(questionRequestDto, user);
   }
 
   @GetMapping("/api/v1/questions/{id}")
@@ -43,14 +46,14 @@ public class QuestionApiController {
   @Auth
   @PutMapping("/api/v1/questions/{id}")
   public void update(@PathVariable Long id, @RequestBody QuestionUpdateDto questionUpdateDto,
-      HttpSession session) {
-    questionService.update(id, questionUpdateDto, session);
+      @AuthUser UserResponseDto user) {
+    questionService.update(id, questionUpdateDto, user);
   }
 
   @Auth
   @DeleteMapping("/api/v1/questions/{id}")
-  public void delete(@PathVariable Long id, HttpSession session) {
-    questionService.delete(id, session);
+  public void delete(@PathVariable Long id, @AuthUser UserResponseDto user) {
+    questionService.delete(id, user);
   }
 
   @GetMapping("/api/v1/questions/list")
