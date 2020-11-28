@@ -1,6 +1,6 @@
 package com.board.web;
 
-import com.board.domain.question.exception.MissmatchAuthor;
+import com.board.domain.question.exception.MismatchAuthor;
 import com.board.domain.user.exception.AlreadyExistUser;
 import com.board.domain.user.exception.LoginException;
 import com.board.domain.user.exception.UserMismatchException;
@@ -27,7 +27,7 @@ public class GlobalControllerAdvice {
   }
 
   @ResponseStatus(HttpStatus.FORBIDDEN)
-  @ExceptionHandler(value = {UserMismatchException.class, MissmatchAuthor.class})
+  @ExceptionHandler(value = {UserMismatchException.class, MismatchAuthor.class})
   public ResponseEntity handleUserMismatchException(HttpServletRequest request,
       Exception e) {
     log.error(String.valueOf(request.getMethod()));

@@ -23,7 +23,7 @@ public class UserResponseDto implements Serializable {
     this.name = entry.getName();
   }
 
-    public User toEntity() {
+  public User toEntity() {
     return User.builder()
         .id(this.id)
         .userId(this.userId)

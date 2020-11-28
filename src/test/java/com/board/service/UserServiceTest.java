@@ -67,10 +67,8 @@ public class UserServiceTest {
     when(mockUserRepository.findByUserId(any())).thenReturn(mockUser);
     when(mockUser.matchUserId(any())).thenReturn(true);
     when(mockUser.update(updateUser)).thenReturn(mockUser);
-
     //when
     Long id = userService.update(updateUser, mockHttpSession);
-
     //then
     verify(mockUser).update(any());
     assertNotNull(id);
@@ -84,13 +82,11 @@ public class UserServiceTest {
     userService = new UserService(mockUserRepository);
     UserResponseDto SessionedUser = mock(UserResponseDto.class);
     UserRequestDto updateUser = mock(UserRequestDto.class);
-
     when(HttpSessionUtils.isLoginUser(any())).thenReturn(true);
     when(HttpSessionUtils.getUserFromSession(any())).thenReturn(SessionedUser);
     when(mockUserRepository.findByUserId(any())).thenReturn(mockUser);
     when(mockUser.matchUserId(any())).thenReturn(false);
-
-    //when
+    //when, then
     userService.update(updateUser, mockHttpSession);
   }
 
@@ -100,15 +96,12 @@ public class UserServiceTest {
     //given
     userService = new UserService(mockUserRepository);
     UserRequestDto mockUserRequestDto = mock(UserRequestDto.class);
-
     when(mockUserRepository.findByUserId(any())).thenReturn(null);
     when(mockUserRepository.save(any())).thenReturn(mockUser);
     when(mockUserRequestDto.isVaild()).thenReturn(true);
     when(mockUser.getId()).thenReturn(0L);
-
     //when
     Long id = userService.save(mockUserRequestDto);
-
     //then
     assertNotNull(id);
   }
@@ -121,8 +114,7 @@ public class UserServiceTest {
     UserRequestDto mockUserRequestDto = mock(UserRequestDto.class);
     when(mockUserRepository.findByUserId(any())).thenReturn(mockUser);
     when(mockUserRequestDto.isVaild()).thenReturn(true);
-
-    //when
+    //when, then
     userService.save(mockUserRequestDto);
   }
 
@@ -134,10 +126,8 @@ public class UserServiceTest {
     UserLoginRequestDto mockLoginDto = mock(UserLoginRequestDto.class);
     when(HttpSessionUtils.isLoginUser(any())).thenReturn(true);
     when(mockLoginDto.isVaild()).thenReturn(true);
-
     //when
     boolean isLogin = userService.login(mockLoginDto, mockHttpSession);
-
     //then
     assertTrue(isLogin);
   }
@@ -148,12 +138,10 @@ public class UserServiceTest {
     //given
     userService = new UserService(mockUserRepository);
     UserLoginRequestDto mockLoginDto = mock(UserLoginRequestDto.class);
-
     when(HttpSessionUtils.isLoginUser(any())).thenReturn(false);
     when(mockUserRepository.findByUserId(any())).thenReturn(mockUser);
     when(mockUser.matchPassword(any())).thenReturn(false);
-
-    //when
+    //when, then
     boolean isLogin = userService.login(mockLoginDto, mockHttpSession);
 
   }
@@ -166,8 +154,7 @@ public class UserServiceTest {
     UserLoginRequestDto mockLoginDto = mock(UserLoginRequestDto.class);
     when(HttpSessionUtils.isLoginUser(any())).thenReturn(false);
     when(mockUserRepository.findByUserId(any())).thenReturn(null);
-
-    //when
+    //when, then
     boolean isLogin = userService.login(mockLoginDto, mockHttpSession);
 
   }
@@ -182,10 +169,8 @@ public class UserServiceTest {
     when(mockUserRepository.findByUserId(any())).thenReturn(mockUser);
     when(mockUser.matchPassword(any())).thenReturn(true);
     when(mockLoginDto.isVaild()).thenReturn(true);
-
     //when
     boolean isLogin = userService.login(mockLoginDto, mockHttpSession);
-
     //then
     assertTrue(isLogin);
   }

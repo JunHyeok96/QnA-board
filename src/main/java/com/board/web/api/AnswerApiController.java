@@ -1,17 +1,11 @@
 package com.board.web.api;
 
 import com.board.config.Auth;
-import com.board.domain.answer.Answer;
 import com.board.service.AnswerService;
-import com.board.web.HttpSessionUtils;
 import com.board.web.dto.Answer.AnswerRequsetDto;
 import com.board.web.dto.Answer.AnswerResponseDto;
-import com.board.web.dto.question.QuestionRequestDto;
-import com.board.web.dto.question.QuestionResponseDto;
-import com.board.web.dto.question.QuestionUpdateDto;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -37,7 +30,7 @@ public class AnswerApiController {
   }
 
   @GetMapping("/api/v1/answers/{id}")
-  public List<AnswerResponseDto> findAnwser(@PathVariable Long id) {
+  public List<AnswerResponseDto> findAnswerByQuestionId(@PathVariable Long id) {
     return answerService.findByQuestion(id);
   }
 

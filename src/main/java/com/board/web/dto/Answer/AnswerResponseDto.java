@@ -1,12 +1,15 @@
 package com.board.web.dto.Answer;
 
 import com.board.domain.answer.Answer;
+import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
-public class AnswerResponseDto {
+public class AnswerResponseDto implements Serializable {
 
   private long id;
   private long questionId;

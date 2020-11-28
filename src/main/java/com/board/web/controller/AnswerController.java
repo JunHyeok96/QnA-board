@@ -2,8 +2,7 @@ package com.board.web.controller;
 
 import com.board.config.Auth;
 import com.board.domain.answer.Answer;
-import com.board.domain.question.exception.MissmatchAuthor;
-import com.board.domain.user.exception.UserMismatchException;
+import com.board.domain.question.exception.MismatchAuthor;
 import com.board.service.AnswerService;
 import com.board.web.HttpSessionUtils;
 import com.board.web.PageUtils;
@@ -50,7 +49,7 @@ public class AnswerController {
     if (user.getUserId().equals(answer.getUserId())) {
       model.addAttribute("answer", answer);
     } else {
-      throw new MissmatchAuthor("본인 답글만 수정할 수 있습니다.");
+      throw new MismatchAuthor("본인 답글만 수정할 수 있습니다.");
     }
     return "post/updateAnswer";
   }

@@ -5,12 +5,13 @@ import java.util.List;
 import org.springframework.ui.Model;
 
 /**
-start page 1 not 0
-*/
+ * start page 1 not 0
+ */
 public class PageUtils {
 
   private static final int PAGE_SIZE = 10;
 
+  //인스턴스 생성 방지
   private PageUtils() {
   }
 
@@ -23,7 +24,8 @@ public class PageUtils {
   public static int nextPage(int totalPage, int currentPage, int size) {
     int totalPageStartPage = totalPage - totalPage % size;
     int currentStartPage = currentPage - currentPage % size;
-    totalPageStartPage = totalPageStartPage == totalPage ? totalPageStartPage - size : totalPageStartPage;
+    totalPageStartPage =
+        totalPageStartPage == totalPage ? totalPageStartPage - size : totalPageStartPage;
     currentStartPage = currentStartPage == currentPage ? currentStartPage - size : currentStartPage;
     if (totalPageStartPage > currentStartPage) {
       return currentStartPage + size + 1;

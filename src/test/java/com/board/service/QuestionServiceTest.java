@@ -6,8 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.board.domain.question.Question;
 import com.board.domain.question.QuestionRepository;
-import com.board.domain.question.exception.MissmatchAuthor;
-import com.board.domain.user.User;
+import com.board.domain.question.exception.MismatchAuthor;
 import com.board.web.HttpSessionUtils;
 import com.board.web.dto.question.QuestionUpdateDto;
 import com.board.web.dto.user.UserResponseDto;
@@ -63,16 +62,14 @@ public class QuestionServiceTest {
     when(questionRepository.findById(any())).thenReturn(mockOptional);
     when(mockOptional.orElseThrow(any())).thenReturn(mockQuestion);
     when(mockQuestion.matchAuthor(any())).thenReturn(true);
-
     //when
     questionService.update(0L, mockQuestionUpdateDto, mockHttpSession);
-
     //then
     verify(mockQuestion).update(mockQuestionUpdateDto);
   }
 
-  @Test(expected = MissmatchAuthor.class)
-  @DisplayName("게시글 수정 - 타인의 게시물")
+  @Test(expected = MismatchAuthor.class)
+  @DisplayName("질문 수정 - 타인의 질문")
   public void failUpdatePost() {
     //given
     questionService = new QuestionService(questionRepository, answerService);
@@ -84,16 +81,14 @@ public class QuestionServiceTest {
     when(questionRepository.findById(any())).thenReturn(mockOptional);
     when(mockOptional.orElseThrow(any())).thenReturn(mockQuestion);
     when(mockQuestion.matchAuthor(any())).thenReturn(false);
-
     //when
     questionService.update(0L, mockQuestionUpdateDto, mockHttpSession);
-
     //then
     verify(mockQuestion, never()).update(any());
   }
 
   @Test
-  @DisplayName("게시글 삭제")
+  @DisplayName("질문 삭제")
   public void deletePost() {
     //given
     questionService = new QuestionService(questionRepository, answerService);
@@ -105,17 +100,15 @@ public class QuestionServiceTest {
     when(questionRepository.findById(any())).thenReturn(mockOptional);
     when(mockOptional.orElseThrow(any())).thenReturn(mockQuestion);
     when(mockQuestion.matchAuthor(any())).thenReturn(true);
-
     //when
     questionService.delete(0L, mockHttpSession);
-
     //then
     verify(questionRepository).delete(any());
     verify(answerService).deleteByQuestion(any());
   }
 
-  @Test(expected = MissmatchAuthor.class)
-  @DisplayName("게시글 삭제 - 타인의 게시물")
+  @Test(expected = MismatchAuthor.class)
+  @DisplayName("질문 삭제 - 타인의 질문")
   public void failDeletePost() {
     //given
     questionService = new QuestionService(questionRepository, answerService);
@@ -129,7 +122,6 @@ public class QuestionServiceTest {
     when(mockQuestion.matchAuthor(any())).thenReturn(false);
     //when
     questionService.delete(0L, mockHttpSession);
-
     //then
     verify(questionRepository, never()).deleteById(any());
     verify(answerService, never()).deleteByQuestion(any());

@@ -1,16 +1,13 @@
 package com.board.web.dto.question;
 
-import com.board.domain.answer.Answer;
 import com.board.domain.question.Question;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
-@RequiredArgsConstructor
+@NoArgsConstructor
 @Getter
 public class QuestionResponseDto implements Serializable {
 

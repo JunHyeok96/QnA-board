@@ -3,7 +3,6 @@ package com.board.web.api;
 import com.board.service.UserService;
 import com.board.web.dto.user.UserRequestDto;
 import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;

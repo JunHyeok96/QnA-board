@@ -4,7 +4,7 @@ import com.board.domain.answer.Answer;
 import com.board.domain.answer.AnswerRepository;
 import com.board.domain.question.Question;
 import com.board.domain.question.QuestionRepository;
-import com.board.domain.question.exception.MissmatchAuthor;
+import com.board.domain.question.exception.MismatchAuthor;
 import com.board.domain.question.exception.PostNotFoundException;
 import com.board.domain.user.User;
 import com.board.web.HttpSessionUtils;
@@ -68,7 +68,7 @@ public class AnswerService {
     if (answer.getUser().matchUserId(user.getUserId())) {
       answer.update(content);
     } else {
-      throw new MissmatchAuthor("본인의 답변만 수정할 수 있습니다.");
+      throw new MismatchAuthor("본인의 답변만 수정할 수 있습니다.");
     }
   }
 
@@ -80,7 +80,7 @@ public class AnswerService {
     if (answer.getUser().matchUserId(user.getUserId())) {
       answerRepository.deleteById(id);
     } else {
-      throw new MissmatchAuthor("본인의 답변만 삭제할 수 있습니다.");
+      throw new MismatchAuthor("본인의 답변만 삭제할 수 있습니다.");
     }
   }
 

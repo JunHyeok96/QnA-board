@@ -2,7 +2,7 @@ package com.board.service;
 
 import com.board.domain.question.Question;
 import com.board.domain.question.QuestionRepository;
-import com.board.domain.question.exception.MissmatchAuthor;
+import com.board.domain.question.exception.MismatchAuthor;
 import com.board.domain.question.exception.PostNotFoundException;
 import com.board.domain.user.User;
 import com.board.domain.user.exception.LoginException;
@@ -80,7 +80,7 @@ public class QuestionService {
     if (question.matchAuthor(user.getUserId())) {
       question.update(questionUpdateDto);
     } else {
-      throw new MissmatchAuthor("본인의 게시물만 수정할 수 있습니다.");
+      throw new MismatchAuthor("본인의 게시물만 수정할 수 있습니다.");
     }
     return id;
   }
@@ -97,7 +97,7 @@ public class QuestionService {
       questionRepository.delete(question);
       answerService.deleteByQuestion(question);
     } else {
-      throw new MissmatchAuthor("본인의 게시물만 삭제할 수 있습니다.");
+      throw new MismatchAuthor("본인의 게시물만 삭제할 수 있습니다.");
     }
   }
 

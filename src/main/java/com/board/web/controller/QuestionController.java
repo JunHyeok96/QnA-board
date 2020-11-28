@@ -2,13 +2,11 @@ package com.board.web.controller;
 
 import com.board.config.Auth;
 import com.board.domain.question.Question;
-import com.board.domain.question.exception.MissmatchAuthor;
-import com.board.domain.user.User;
+import com.board.domain.question.exception.MismatchAuthor;
 import com.board.service.AnswerService;
 import com.board.service.QuestionService;
 import com.board.web.HttpSessionUtils;
 import com.board.web.PageUtils;
-import com.board.web.dto.Answer.AnswerResponseDto;
 import com.board.web.dto.question.QuestionPagingDto;
 import com.board.web.dto.question.QuestionResponseDto;
 import com.board.web.dto.user.UserResponseDto;
@@ -60,7 +58,7 @@ public class QuestionController {
     QuestionResponseDto question = questionService.findById(id);
     UserResponseDto user = HttpSessionUtils.getUserFromSession(session);
     if (!question.getUserId().equals(user.getUserId())) {
-      throw new MissmatchAuthor("본인 게시물만 수정할 수 있습니다.");
+      throw new MismatchAuthor("본인 게시물만 수정할 수 있습니다.");
     }
     model.addAttribute("question", question);
     return "post/update";

@@ -35,4 +35,4 @@ echo "> $JAR_NAME 실행"
 
 cd /home/ubuntu/deploy/
 
-nohup java -jar -Dspring.config.location:/home/ubuntu/deploy/application-real.properties $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &
+nohup java -jar  -Duser.timezone=Asia/Seoul -Dspring.config.location:/home/ubuntu/deploy/application-real.properties $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &
