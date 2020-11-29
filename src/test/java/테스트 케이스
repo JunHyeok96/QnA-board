@@ -1,5 +1,10 @@
 1. QuestionRepositoryTest
   1-1 질문 저장하기
+  1-2 질문글 paging 로딩확인 - 모든 질문글
+  1-3 질문글 paging 로딩확인 - userID(String)
+  1-4 질문글 paging 로딩확인 - userID(Long)
+  1-5 search 로딩확인
+  1-6 전체 게시글 조회 즉시 로딩 확인
 
 2. UserRepositoryTest
   2-1 유저정보 저장하기

@@ -45,7 +45,7 @@ public class Question extends BaseTimeEntity {
 
   @BatchSize(size = 5)
   @OneToMany(mappedBy = "question")
-  Set<Answer> answers = new LinkedHashSet<>();
+  private Set<Answer> answers = new LinkedHashSet<>();
 
   @Builder
   public Question(String title, String content, User user) {

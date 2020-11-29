@@ -33,7 +33,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
   @EntityGraph(attributePaths = {"user"})
   @Query(
-      "SELECT distinct q FROM Question q  WHERE q.content LIKE %?1% or q.title LIKE %?1%"
+      "SELECT q FROM Question q  WHERE q.content LIKE %?1% or q.title LIKE %?1%"
           + "order by CASE WHEN q.title LIKE %?1% THEN 1 ELSE 2 END"
           + "        , CASE WHEN q.content LIKE %?1%    THEN 1 ELSE 2 END")
   Page<Question> search(String keyword, Pageable pageable);

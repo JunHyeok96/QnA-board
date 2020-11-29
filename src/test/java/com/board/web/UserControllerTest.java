@@ -51,7 +51,6 @@ public class UserControllerTest {
       .password(password)
       .email(email)
       .build();
-  ;
 
   MockHttpSession session = new MockHttpSession();
 
