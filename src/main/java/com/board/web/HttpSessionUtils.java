@@ -7,7 +7,6 @@ import javax.servlet.http.HttpSession;
 public class HttpSessionUtils {
 
   public static final String USER_SESSION_KEY = "sessionedUser";
-
   //인스턴스 생성 방지
   private HttpSessionUtils() {
   }
@@ -25,7 +24,7 @@ public class HttpSessionUtils {
     session.removeAttribute(HttpSessionUtils.USER_SESSION_KEY);
   }
 
-  public static void updateUser(User user, HttpSession session) {
+  public static void updateUser(UserResponseDto user, HttpSession session) {
     session.setAttribute(USER_SESSION_KEY, user);
   }
 

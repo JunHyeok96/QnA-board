@@ -6,15 +6,18 @@ import com.board.domain.user.exception.AlreadyExistUser;
 import com.board.domain.user.exception.LoginException;
 import com.board.domain.user.exception.UserMismatchException;
 import com.board.domain.user.exception.UserNotFoundException;
+import com.board.web.HttpCookieUtils;
 import com.board.web.HttpSessionUtils;
 import com.board.web.dto.user.UserLoginRequestDto;
 import com.board.web.dto.user.UserRequestDto;
 import com.board.web.dto.user.UserResponseDto;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.WebUtils;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,7 +41,7 @@ public class UserService {
   }
 
   @Transactional
-  public Long update(UserRequestDto updateUser, HttpSession session) {
+  public long update(UserRequestDto updateUser, HttpSession session) {
     UserResponseDto sessionUser = HttpSessionUtils.getUserFromSession(session);
     User user = userRepository.findByUserId(updateUser.getUserId());
     if (user == null) {
@@ -48,7 +51,7 @@ public class UserService {
       throw new UserMismatchException("수정 권한이 없습니다.");
     }
     long id = user.update(updateUser).getId();
-    HttpSessionUtils.updateUser(user, session);
+    HttpSessionUtils.updateUser(user.makeSessionValue(), session);
     return id;
   }
 
@@ -58,7 +61,7 @@ public class UserService {
     return new UserResponseDto(entity);
   }
 
-  @Transactional(readOnly = true)
+  @Transactional
   public boolean login(UserLoginRequestDto requestDto, HttpSession session) {
     if (!requestDto.isVaild()) {
       throw new LoginException("유효하지 않은 값 입니다.");
@@ -74,18 +77,34 @@ public class UserService {
       log.info("id : " + requestDto.getUserId() + "님이 다른 비밀번호로 접근했습니다.");
       throw new LoginException("로그인 정보를 확인해주세요");
     } else {
-      //TODO 쿠키를 이용한 로그인유지
       session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user.makeSessionValue());
+      user.updateSessionId(session.getId());
       log.info("id : " + requestDto.getUserId() + "님이 로그인 하셨습니다.");
       return true;
     }
   }
 
+  @Transactional(readOnly = true)
+  public UserResponseDto findBySessionId(String sessionId) {
+    return userRepository.findBySessionId(sessionId).makeSessionValue();
+  }
+
   @Transactional
-  public Long updateByAdmin(UserRequestDto updateUser, HttpSession session) {
+  public void deleteSessionId(String sessionId) {
+    try {
+      User user = userRepository.findBySessionId(sessionId);
+      user.updateSessionId(null);
+    } catch (NullPointerException e) {
+      log.error("세션 정보가 존재하지 않습니다. " + sessionId);
+      return;
+    }
+  }
+
+  @Transactional
+  public long updateByAdmin(UserRequestDto updateUser, HttpSession session) {
     User user = userRepository.findByUserId(updateUser.getUserId());
     long id = user.update(updateUser).getId();
-    HttpSessionUtils.updateUser(user, session);
+    HttpSessionUtils.updateUser(user.makeSessionValue(), session);
     return id;
   }
 

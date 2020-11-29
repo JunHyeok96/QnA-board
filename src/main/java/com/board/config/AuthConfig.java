@@ -2,7 +2,6 @@ package com.board.config;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -19,9 +18,9 @@ public class AuthConfig implements WebMvcConfigurer {
   public void addInterceptors(InterceptorRegistry registry) {
     registry.addInterceptor(authLoginInterceptor)
         .addPathPatterns("/**")
-        .excludePathPatterns("/")
         .excludePathPatterns("/post/read/*")
         .excludePathPatterns("/user/login")
+        .excludePathPatterns("/user/logout")
         .excludePathPatterns("/user/form");
   }
 

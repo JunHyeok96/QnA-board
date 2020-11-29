@@ -5,6 +5,7 @@ import com.board.domain.answer.Answer;
 import com.board.domain.question.Question;
 import com.board.service.AnswerService;
 import com.board.service.QuestionService;
+import com.board.web.HttpSessionUtils;
 import com.board.web.PageUtils;
 import com.board.web.dto.Answer.AnswerResponseDto;
 import com.board.web.dto.question.QuestionPagingDto;
@@ -29,7 +30,7 @@ public class IndexController {
   private final int CONTENT_SIZE = 5;
 
   @GetMapping("/")
-  public String index(Model model) {
+  public String index(Model model, HttpSession session) {
     Page<Question> questions = questionService
         .findQuestionAll(PageRequest.of(0, CONTENT_SIZE, Sort.by("createDate").descending()));
     int maxPage = (int) questions.getTotalPages();

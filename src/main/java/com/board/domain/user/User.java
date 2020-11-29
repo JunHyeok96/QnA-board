@@ -34,13 +34,17 @@ public class User extends BaseTimeEntity implements Serializable {
   @Column(length = 30)
   private String email;
 
+  @Column
+  private String sessionId;
+
   @Builder
-  public User(Long id, String userId, String password, String name, String email) {
+  public User(Long id, String userId, String password, String name, String email, String sessionId) {
     this.id = id;
     this.userId = userId;
     this.password = password;
     this.name = name;
     this.email = email;
+    this.sessionId = sessionId;
   }
 
   public User update(UserRequestDto updateDto) {
@@ -68,4 +72,7 @@ public class User extends BaseTimeEntity implements Serializable {
     return newUserId.equals(userId);
   }
 
+  public void updateSessionId(String sessionId){
+    this.sessionId = sessionId;
+  }
 }
