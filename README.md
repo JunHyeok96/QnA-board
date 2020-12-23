@@ -1,7 +1,7 @@
 # QnA-board
 
 ##### Code Style : google style
-### [개발일지](https://jgrammer.tistory.com/category/%EC%9B%B9%20%EA%B0%9C%EB%B0%9C/Q%26A%20%EA%B2%8C%EC%8B%9C%ED%8C%90%20%EA%B5%AC%ED%98%84)
+### [개발일지](https://jgrammer.tistory.com/category/%EC%9B%B9%20%EA%B0%9C%EB%B0%9C/Q%26A%20%EA%B2%8C%EC%8B%9C%ED%8C%90)
 
 ## Database & Storage
 ![image](https://user-images.githubusercontent.com/52908154/100590951-6b851100-3338-11eb-869c-46cfd167cd10.png)
